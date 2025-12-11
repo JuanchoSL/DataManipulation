@@ -12,6 +12,40 @@ composer require juanchosl/datamanipulators
 
 ## Manipulators
 
+### Strings
+
+| Manipulation          | Description |
+| --------------------- | ----------- |
+| substring             |             |
+| repeat                |             |
+| format                |             |
+| replace               |             |
+| reverse               |             |
+| toUpperFirst          |             |
+| toLowerFirst          |             |
+| toUpperWords          |             |
+| toUpper               |             |
+| toLower               |             |
+| padding               |             |
+| preppend              |             |
+| concatenation         |             |
+| chunk                 |             |
+| wordWrap              |             |
+| trim                  |             |
+| ltrim                 |             |
+| rtrim                 |             |
+| shuffle               |             |
+| rotate13              |             |
+| md5                   |             |
+| quotedPrintableEncode |             |
+| quotedPrintableDecode |             |
+| uuEncode              |             |
+| uuDecode              |             |
+| base64Encode          |             |
+| base64Decode          |             |
+| binToHex              |             |
+| hexToBin              |             |
+
 ### Numbers
 
 | Operation          | Description                                                                                       |
@@ -183,8 +217,8 @@ $sanitizer = (new NumberSanitizers())->integer($with_thousand_separator = false)
 echo $sanitizer('Z123456789N'); //123456789
 ```
 
-> For integer sanitization, the FILTER_FLAG_ALLOW_FRACTION is not used, allways perform a number_format with 0 fraction for remove the decimals, 
-taken only the integer part, not just removing dot
+> For integer sanitization, the FILTER_FLAG_ALLOW_FRACTION is not used, allways perform a number_format with 0 fraction for remove the decimals,
+> taken only the integer part, not just removing dot
 
 ```php
 $sanitizer = (new NumberSanitizers())->integer($with_thousand_separator = false);

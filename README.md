@@ -125,7 +125,7 @@ $sanitizator= (new StringSanitizers())->stripTags()->htmlSpecialChars();
 echo $sanitizator("<div>Camión&\r\n</div>"); //"Cami&oacute;n&amp;\r\n"
 ```
 
-### Entended String Sanitizators
+### Extended String Sanitizators
 
 #### setStripBacktick
 
@@ -183,7 +183,8 @@ $sanitizer = (new NumberSanitizers())->integer($with_thousand_separator = false)
 echo $sanitizer('Z123456789N'); //123456789
 ```
 
-> For integer sanitization, the FILTER_FLAG_ALLOW_FRACTION is not used, allways perform a number_format with 0 fraction for remove the decimals, taken only the integer part
+> For integer sanitization, the FILTER_FLAG_ALLOW_FRACTION is not used, allways perform a number_format with 0 fraction for remove the decimals, 
+taken only the integer part, not just removing dot
 
 ```php
 $sanitizer = (new NumberSanitizers())->integer($with_thousand_separator = false);

@@ -44,7 +44,7 @@ class DateManipulators
      * Using TRUE, it force to set to 0 all time values allways, when a time block is indicated too, in order to prevent delete existing hour, set to null (by default) or 
      * set to FALSE for use providing hour and real time when is not available .
      * @param bool $to_zero
-     * @return DateSanitizers
+     * @return DateManipulators
      */
     public function setTimeToZero(?bool $to_zero = true): static
     {
@@ -55,7 +55,7 @@ class DateManipulators
     /**
      * By default, the response is a DateTime object, in order to use it and modify across your code, if would a DateTimeImmutable, can force the response using setResponseImmutable(true)
      * @param bool $to_immutable
-     * @return DateSanitizers
+     * @return DateManipulators
      */
     public function setResponseImmutable(bool $to_immutable = true): static
     {
@@ -115,7 +115,7 @@ class DateManipulators
      */
     public function fromString(string $input): ?DateTimeInterface
     {
-        if (strpos($input, '\\') !== false || strpos($input, ' ') !== false) {
+        if (strpos($input, '\\') !== false || strpos($input, '+') !== false || strpos($input, ' ') !== false) {
             return $this->finalAdapter(new DateTime($input));
         }
         if (strpos($input, '-') !== false) {

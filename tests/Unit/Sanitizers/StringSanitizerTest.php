@@ -40,5 +40,7 @@ class StringSanitizerTest extends TestCase
         $this->assertEquals("SELECT * FROM `table`", (new StringSanitizers())->addSlashes()->__invoke("SELECT * FROM `table`"));
         $this->assertEquals("SELECT * FROM \'table\'", (new StringSanitizers())->addSlashes()->__invoke("SELECT * FROM 'table'"));
         $this->assertEquals('SELECT * FROM \"table\"', (new StringSanitizers())->addSlashes()->__invoke('SELECT * FROM "table"'));
+        
+        $this->assertEquals('Juan.Sanchez@tecnicosweb.com', (new StringSanitizers())->email()->__invoke('Juan. Sanchez@tecnicosweb.com'));
     }
 }

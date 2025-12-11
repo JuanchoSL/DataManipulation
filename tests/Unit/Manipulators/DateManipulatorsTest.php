@@ -147,4 +147,65 @@ class DateManipulatorsTest extends TestCase
             $this->assertEquals($timestamp, $sanitized->getTimestamp());
         }
     }
+    public function testFromExcel()
+    {
+        $sanitizer = (new DateManipulators())->setTimeToZero(null)->setResponseImmutable(false);
+        $dates = [
+            "46023" => "2026-01-01",
+        ];
+        foreach ($dates as $xlsx_time => $date) {
+            $sanitized = $sanitizer->fromExcel($xlsx_time);
+            $this->assertInstanceOf(DateTimeInterface::class, $sanitized);
+            $this->assertInstanceOf(DateTime::class, $sanitized);
+            $this->assertEquals($date, $sanitized->format("Y-m-d"));
+        }
+
+    }
+    public function testFromTimestamp()
+    {
+        $sanitizer = (new DateManipulators())->setTimeToZero(null)->setResponseImmutable(false);
+        $dates = [
+            1767225600 => "2026-01-01",
+            1769904000 => "2026-02-01",
+            1770681600 => "2026-02-10",
+        ];
+        foreach ($dates as $time => $date) {
+            $sanitized = $sanitizer->fromTimestamp($time);
+            $this->assertInstanceOf(DateTimeInterface::class, $sanitized);
+            $this->assertInstanceOf(DateTime::class, $sanitized);
+            $this->assertEquals($date, $sanitized->format("Y-m-d"));
+        }
+    }
+    public function testFromFormatString()
+    {
+        $sanitizer = (new DateManipulators())->setTimeToZero(true)->setResponseImmutable(false);
+        $dates = [
+            1767225600 => "2026-01-01",
+            1769904000 => "2026-02-01",
+            1770681600 => "2026-02-10",
+        ];
+        foreach ($dates as $time => $date) {
+            $sanitized = $sanitizer->fromFormatString($date, "Y-m-d");
+            $this->assertInstanceOf(DateTimeInterface::class, $sanitized);
+            $this->assertInstanceOf(DateTime::class, $sanitized);
+            $this->assertEquals($time, $sanitized->getTimestamp());
+        }
+    }
+    public function testFromString()
+    {
+        $sanitizer = (new DateManipulators())->setTimeToZero(null)->setResponseImmutable(false);
+        $dates = [
+            "Thu, 01 Jan 26 00:00:00 +0000",
+            "Thursday, 01-Jan-26 00:00:00 UTC",
+            "2026-01-01T00:00:00.000+00:00",
+            "2026-01-01T00:00:00+00:00",
+            "+2026-01-01T00:00:00+00:00",
+        ];
+        foreach ($dates as $date) {
+            $sanitized = $sanitizer->fromString($date);
+            $this->assertInstanceOf(DateTimeInterface::class, $sanitized);
+            $this->assertInstanceOf(DateTime::class, $sanitized);
+            $this->assertEquals("2026-01-01", $sanitized->format("Y-m-d"));
+        }
+    }
 }

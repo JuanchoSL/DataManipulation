@@ -10,7 +10,7 @@ class StringSanitizers
     use FilterVarTrait;
     
     /**
-     * Extract and sanitize only the part of a given string that validate as email
+     * Extract and sanitize, removing all non valid chars for an email string
      * @return StringSanitizers
      */
     public function email(): static

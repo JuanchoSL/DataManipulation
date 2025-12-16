@@ -7,7 +7,7 @@ Little methods collection in order to manipulate variables contents. Group of so
 ## Install
 
 ```bash
-composer require juanchosl/datamanipulators
+composer require juanchosl/datamanipulation
 ```
 
 ## Manipulators
@@ -72,7 +72,11 @@ composer require juanchosl/datamanipulators
 | max                | pass an array or floats list and return the max including the internal value into the comparation |
 
 ```php
-echo (string)(NumbersManipulators($pvu = 100))->product($units = 10)->increasePercent($taxes = 21); //1210
+echo (string)(NumbersManipulators($pvu = 100))
+    ->product($units = 10)
+    ->increasePercent($taxes = 21); 
+    
+//1210
 ```
 
 ### Date + Times
@@ -82,25 +86,41 @@ Check, parse a value as a date from some origins and formats, and retunrs a Date
 #### Create from excel time value
 
 ```php
-echo  (new DateManipulators())->fromExcel(46023)->format("Y-m-d");// 2026-01-01
+echo  (new DateManipulators())
+    ->fromExcel(46023)
+    ->format("Y-m-d");
+    
+// 2026-01-01
 ```
 
 #### Create from timestamp
 
 ```php
-echo  (new DateManipulators())->fromTimestamp(1735689600)->format("Y-m-d");// 2026-01-01
+echo  (new DateManipulators())
+    ->fromTimestamp(1735689600)
+    ->format("Y-m-d");
+
+// 2026-01-01
 ```
 
 #### Create from string
 
 ```php
-echo  (new DateManipulators())->fromString("Thursday, 01-Jan-26 00:00:00 UTC")->format("Y-m-d");// 2026-01-01
+echo  (new DateManipulators())
+    ->fromString("Thursday, 01-Jan-26 00:00:00 UTC")
+    ->format("Y-m-d");
+
+// 2026-01-01
 ```
 
 #### Create from knowed format
 
 ```php
-echo  (new DateManipulators())->fromFormatString(20260101, "Ymd")->format("Y-m-d");// 2026-01-01
+echo  (new DateManipulators())
+    ->fromFormatString(20260101, "Ymd")
+    ->format("Y-m-d");
+
+// 2026-01-01
 ```
 
 ## Sanitizers

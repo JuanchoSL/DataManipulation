@@ -16,6 +16,8 @@ class StringsManipulators implements Stringable
 
     public function substring(int $offset, ?int $length = null): static
     {
+        return new StringsManipulators(mb_substr($this->value, $offset, $length));
+        return new StringsManipulators(mb_strcut($this->value, $offset, $length));
         return new StringsManipulators(substr($this->value, $offset, $length));
     }
 
@@ -42,12 +44,12 @@ class StringsManipulators implements Stringable
 
     public function toUpperFirst(): static
     {
-        return new StringsManipulators(ucfirst($this->value));
+        return new StringsManipulators(mb_ucfirst($this->value));
     }
 
     public function toLowerFirst(): static
     {
-        return new StringsManipulators(lcfirst($this->value));
+        return new StringsManipulators(mb_lcfirst($this->value));
     }
 
     public function toUpperWords(string $separators = " \t\r\n\f\v"): static
@@ -57,17 +59,17 @@ class StringsManipulators implements Stringable
 
     public function toUpper(): static
     {
-        return new StringsManipulators(strtoupper($this->value));
+        return new StringsManipulators(mb_strtoupper($this->value));
     }
 
     public function toLower(): static
     {
-        return new StringsManipulators(strtolower($this->value));
+        return new StringsManipulators(mb_strtolower($this->value));
     }
 
     public function padding(int $length, string $pad_string = ' ', int $pad_type = STR_PAD_LEFT): static
     {
-        return new StringsManipulators(str_pad($this->value, $length, $pad_string, $pad_type));
+        return new StringsManipulators(mb_str_pad($this->value, $length, $pad_string, $pad_type));
     }
 
     public function preppend(string $value, string $separator = " "): static
@@ -82,6 +84,7 @@ class StringsManipulators implements Stringable
 
     public function chunk(int $length = 76, string $separator = "\r\n"): static
     {
+        return new StringsManipulators(implode($separator, mb_str_split($this->value, $length)));
         return new StringsManipulators(chunk_split($this->value, $length, $separator));
     }
 
@@ -92,23 +95,40 @@ class StringsManipulators implements Stringable
 
     public function trim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(trim($this->value, $chars));
+        return new StringsManipulators(mb_trim($this->value, $chars));
     }
 
     public function ltrim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(ltrim($this->value, $chars));
+        return new StringsManipulators(mb_ltrim($this->value, $chars));
     }
 
     public function rtrim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(rtrim($this->value, $chars));
+        return new StringsManipulators(mb_rtrim($this->value, $chars));
     }
 
     /*public function crc32(): static
     {
         return new StringsManipulators(crc32($this->value));
     }*/
+
+    public function eol(string $to_char = "\r\n"): static
+    {
+        $string = $this->value;
+
+        if ($to_char != "\r\n") {
+            $invert = ($to_char == "\r") ? "\n" : "\r";
+            $string = str_replace("\r\n", $invert, $string);
+            $string = str_replace($invert, $to_char, $string);
+        } else {
+            $string = str_replace("\r\n", "\n", $string);
+            $string = str_replace("\n", "\r", $string);
+            $string = str_replace("\r", $to_char, $string);
+        }
+
+        return new StringsManipulators($string);
+    }
 
     public function shuffle(): static
     {
@@ -164,6 +184,7 @@ class StringsManipulators implements Stringable
     {
         return new StringsManipulators(hex2bin($this->value));
     }
+
     public function __tostring(): string
     {
         return (string) $this->value;

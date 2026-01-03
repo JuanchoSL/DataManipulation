@@ -5,6 +5,7 @@ namespace JuanchoSL\DataManipulation\Tests\Unit\Sanitizers;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use JuanchoSL\DataManipulation\Manipulators\Strings\DateManipulators;
 
@@ -35,8 +36,8 @@ class DateManipulatorsTest extends TestCase
     public function testDateTimeAsTimestamp()
     {
         $timestamp = strtotime('2025-11-30 15:00:00');
-        $sanitizer = (new DateManipulators())->setTimeToZero(false);
-        $this->assertEquals($timestamp, $sanitizer(1764514800)->getTimestamp());
+        $sanitizer = (new DateManipulators(new DateTimeZone("Europe/Madrid")))->setTimeToZero(false);
+        $this->assertEquals($timestamp, $sanitizer(1764511200)->getTimestamp());
     }
 
     public function testDateStartHourAsTimestampWithHour()
@@ -178,11 +179,11 @@ class DateManipulatorsTest extends TestCase
     }
     public function testFromFormatString()
     {
-        $sanitizer = (new DateManipulators())->setTimeToZero(true)->setResponseImmutable(false);
+        $sanitizer = (new DateManipulators(new DateTimeZone("Europe/Madrid")))->setTimeToZero(true)->setResponseImmutable(false);
         $dates = [
-            1767225600 => "2026-01-01",
-            1769904000 => "2026-02-01",
-            1770681600 => "2026-02-10",
+            1767222000 => "2026-01-01",
+            1769900400 => "2026-02-01",
+            1770678000 => "2026-02-10",
         ];
         foreach ($dates as $time => $date) {
             $sanitized = $sanitizer->fromFormatString($date, "Y-m-d");

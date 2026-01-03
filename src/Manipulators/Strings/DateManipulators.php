@@ -5,6 +5,7 @@ namespace JuanchoSL\DataManipulation\Manipulators\Strings;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 
 class DateManipulators
 {
@@ -38,7 +39,13 @@ class DateManipulators
     ];
     protected ?bool $avoid_realtime = null;
     protected bool $use_immutable = false;
+    protected DateTimeZone $time_zone;
 
+    public function __construct(?DateTimeZone $time_zone = null)
+    {
+        $time_zone ??= new DateTimeZone(ini_get("date.timezone"));
+        $this->setTimeZone($time_zone);
+    }
     /**
      * When you use a string date without a time, the DateTime response object, use the actual time, if you would set as 00:00:00, can force it with setTimeToZero(true).
      * Using TRUE, it force to set to 0 all time values allways, when a time block is indicated too, in order to prevent delete existing hour, set to null (by default) or 
@@ -49,6 +56,17 @@ class DateManipulators
     public function setTimeToZero(?bool $to_zero = true): static
     {
         $this->avoid_realtime = (is_bool($to_zero)) ? $to_zero : null;
+        return $this;
+    }
+
+    /**
+     * Set Timezone for use with other distinct from php config file
+     * @param DateTimeZone $timezone
+     * @return DateManipulators
+     */
+    public function setTimeZone(DateTimeZone $timezone): static
+    {
+        $this->time_zone = $timezone;
         return $this;
     }
 
@@ -208,7 +226,6 @@ class DateManipulators
                 $result = DateTimeImmutable::createFromMutable($result);
             }
         }
-        return $result;
-        //return new DateTimeImmutable($result);
+        return $result->setTimezone($this->time_zone);
     }
 }

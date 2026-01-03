@@ -14,37 +14,40 @@ composer require juanchosl/datamanipulation
 
 ### Strings
 
-| Manipulation          | Description |
-| --------------------- | ----------- |
-| substring             |             |
-| repeat                |             |
-| format                |             |
-| replace               |             |
-| reverse               |             |
-| toUpperFirst          |             |
-| toLowerFirst          |             |
-| toUpperWords          |             |
-| toUpper               |             |
-| toLower               |             |
-| padding               |             |
-| preppend              |             |
-| concatenation         |             |
-| chunk                 |             |
-| wordWrap              |             |
-| trim                  |             |
-| ltrim                 |             |
-| rtrim                 |             |
-| shuffle               |             |
-| rotate13              |             |
-| md5                   |             |
-| quotedPrintableEncode |             |
-| quotedPrintableDecode |             |
-| uuEncode              |             |
-| uuDecode              |             |
-| base64Encode          |             |
-| base64Decode          |             |
-| binToHex              |             |
-| hexToBin              |             |
+Perform actions over strings, using multibyte functions where are available, and returns a new StringManipulator object in order to mantain inmutability over previous entities
+
+| Manipulation          | MultiByte | Description |
+| --------------------- |:---------:| -------- |
+| substring             |     X     | Extract a part of a string, starting from indicated char and with the desired lenght         |
+| repeat                |          | Repeat the string n times         |
+| format                |          | Apply format, with indicated values, to the string         |
+| replace               |          | Search and replace a substring, can be case sensitive or not         |
+| reverse               |          | Apply a reverse to the string         |
+| toUpperFirst          |     X      | To upper the first char of the string         |
+| toLowerFirst          |     X      |  To lower the first char of the string        |
+| toUpperWords          |          | To upper the first char of every word into the string, can be indicated the char separator, not only spaces         |
+| toUpper               |     X      | To upper all the string         |
+| toLower               |     X      | To lower all the string         |
+| padding               |     X      | Fill the string to the desired lenght with the value, at the left, rigth or both        |
+| preppend              |     X      | Concat a new value at the start of the string, can be indicated an union char, a space is used if not           |
+| concatenation         |     X      | Concat a new value at the end of the string, can be indicated an union char, a space is used if not         |
+| chunk                 |     X      | Convert to a multiline string with a fix lenght         |
+| wordWrap              |          | Convert to a multiline string with a fix lenght, but safely for word, ensuring do not cut, applying from the previous space         |
+| trim                  |     X      | Clean a string, removing spaces or control chars at the start or the end of the string          |
+| ltrim                 |     X      | Clean a string, removing spaces or control chars at the start of the string          |
+| rtrim                 |     X      | Clean a string, removing spaces or control chars at the end of the string         |
+| eol                   |     X      | Convert breaklines chars (\r,\n,\r\n) to the desired new char, in order to ensure the use of PHP_EOL constant for unknow origins        |
+| shuffle               |          | Apply a random shuffle          |
+| rotate13              |          | Apply a rot13 transformation        |
+| md5                   |          | Calculate the md5         |
+| quotedPrintableEncode |          | Convert form 8bits string to QP string, following the rules from RFC2045         |
+| quotedPrintableDecode |          | Convert to 8bits string from QP string, following the rules from RFC2045         |
+| uuEncode              |          | Encode the string using the uuencode algorithm         |
+| uuDecode              |          | Decode a uuencoded string        |
+| base64Encode          |          | Encode to Base 64         |
+| base64Decode          |          | Decode from Base 64         |
+| binToHex              |          | Convert the binary string to hexadecimal equivalent         |
+| hexToBin              |          | Convert the hexadecimal string to binary data         |
 
 ### Numbers
 

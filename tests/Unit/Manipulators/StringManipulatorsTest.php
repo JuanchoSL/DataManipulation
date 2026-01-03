@@ -33,8 +33,8 @@ class StringManipulatorsTest extends TestCase
     }
     public function testSubstring()
     {
-        $string = new StringsManipulators("juan sanchez lecegui");
-        $this->assertEquals("sanchez", (string) $string = $string->substring(5, strlen('sanchez')));
+        $string = new StringsManipulators("juan sánchez lecegui");
+        $this->assertEquals("sánchez", (string) $string = $string->substring(5, mb_strlen('sánchez')));
     }
     public function testRepeat()
     {
@@ -85,9 +85,9 @@ class StringManipulatorsTest extends TestCase
     }
     public function testPadding()
     {
-        $string = new StringsManipulators("abcde");
-        $this->assertEquals("-----abcde", (string) $string->padding(10, '-', STR_PAD_LEFT));
-        $this->assertEquals("abcde-----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+        $string = new StringsManipulators("abcde€");
+        $this->assertEquals("----abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
+        $this->assertEquals("abcde€----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
     }
     public function testTrim()
     {
@@ -103,15 +103,31 @@ class StringManipulatorsTest extends TestCase
     }
     public function testChunk()
     {
-        $string = new StringsManipulators("abcdefghijklmnopqrstuvwxyz");
-        $this->assertEquals("abcdefghij\r\nklmnopqrst\r\nuvwxyz\r\n", (string) $string = $string->chunk(10));
+        $string = new StringsManipulators("abcdefghijklmnñopqrstuvwxyz");
+        $this->assertEquals("abcdefghij\r\nklmnñopqrs\r\ntuvwxyz", (string) $string = $string->chunk(10));
     }
 
     public function testWordWrap()
     {
         $string = new StringsManipulators("juan sanchez lecegui");
-        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string)$string->wordWrap(10, "\r\n"));
+        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(10, "\r\n"));
         $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string = $string->wordWrap(10, "\r\n", true));
         $this->assertEquals("juan\r\nsanch\r\nez\r\nleceg\r\nui", (string) $string = $string->wordWrap(5, "\r\n", true));
+    }
+
+    public function testEOL()
+    {
+        $strings = [
+            "juan\r\nsanchez\r\nlecegui",
+            "juan\rsanchez\rlecegui",
+            "juan\nsanchez\nlecegui",
+        ];
+
+        foreach ($strings as $string) {
+            $string = new StringsManipulators($string);
+            $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->eol("\r\n"));
+            $this->assertEquals("juan\rsanchez\rlecegui", (string) $string->eol("\r"));
+            $this->assertEquals("juan\nsanchez\nlecegui", (string) $string->eol("\n"));
+        }
     }
 }

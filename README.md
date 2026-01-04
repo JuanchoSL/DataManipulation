@@ -44,6 +44,8 @@ Perform actions over strings, using multibyte functions where are available, and
 | quotedPrintableDecode |          | Convert to 8bits string from QP string, following the rules from RFC2045         |
 | uuEncode              |          | Encode the string using the uuencode algorithm         |
 | uuDecode              |          | Decode a uuencoded string        |
+| urlEncode             |          | Encode the string using the rawurlencode algorithm, following the rules from RFC3986         |
+| urlDecode             |          | Decode a rawurlencoded string, following the rules from RFC3986        |
 | base64Encode          |          | Encode to Base 64         |
 | base64Decode          |          | Decode from Base 64         |
 | binToHex              |          | Convert the binary string to hexadecimal equivalent         |

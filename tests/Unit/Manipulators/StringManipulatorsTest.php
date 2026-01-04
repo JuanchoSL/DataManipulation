@@ -59,6 +59,12 @@ class StringManipulatorsTest extends TestCase
         $this->assertNotEquals("abcdef", (string) $string = $string->rotate13());
         $this->assertEquals("abcdef", (string) $string = $string->rotate13());
     }
+    public function testCharset()
+    {
+        $string = new StringsManipulators("camión");
+        $this->assertNotEquals("camión", (string) $string1 = $string->convertEncoding("UTF-7"));
+        $this->assertEquals("camión", (string) $string = $string1->convertEncoding('UTF-8'));
+    }
     public function testQP()
     {
         $string = new StringsManipulators("àèìòù");
@@ -76,6 +82,13 @@ class StringManipulatorsTest extends TestCase
         $string = new StringsManipulators("àèìòù");
         $this->assertNotEquals("àèìòù", (string) $string = $string->uuEncode());
         $this->assertEquals("àèìòù", (string) $string = $string->uuDecode());
+    }
+
+    public function testUrl()
+    {
+        $string = new StringsManipulators("parametro1=camión");
+        $this->assertNotEquals("parametro1=camión", (string) $string = $string->urlEncode());
+        $this->assertEquals("parametro1=camión", (string) $string = $string->urlDecode());
     }
     public function testHex()
     {

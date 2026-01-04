@@ -155,6 +155,21 @@ class StringsManipulators implements Stringable
         return new StringsManipulators(quoted_printable_decode($this->value));
     }
 
+    public function convertEncoding(string $to_map = 'UTF-8', ?string $from_map = null): static
+    {
+        //if (!@mb_check_encoding($this->value, $to_map)) {
+            if (empty($from_map)) {
+                $encodings = mb_list_encodings();
+                $from_map = mb_detect_encoding($this->value, $encodings, true);
+                if (empty($from_map)) {
+                    $from_map = mb_detect_encoding($this->value, $encodings, false);
+                }
+            }
+            return new StringsManipulators(mb_convert_encoding($this->value, $to_map, $from_map));
+        //}
+        return $this;
+    }
+
     public function uuEncode(): static
     {
         return new StringsManipulators(convert_uuencode($this->value));
@@ -163,6 +178,16 @@ class StringsManipulators implements Stringable
     public function uuDecode(): static
     {
         return new StringsManipulators(convert_uudecode($this->value));
+    }
+
+    public function urlEncode(): static
+    {
+        return new StringsManipulators(rawurlencode($this->value));
+    }
+
+    public function urlDecode(): static
+    {
+        return new StringsManipulators(rawurldecode($this->value));
     }
 
     public function base64Encode(): static

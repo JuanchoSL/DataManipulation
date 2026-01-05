@@ -16,6 +16,9 @@ class StringsManipulators implements Stringable
 
     public function substring(int $offset, ?int $length = null): static
     {
+        $result = (function_exists('mb_substr')) ? mb_substr($this->value, $offset, $length) : substr($this->value, $offset, $length);
+        return new StringsManipulators($result);
+
         return new StringsManipulators(mb_substr($this->value, $offset, $length));
         return new StringsManipulators(mb_strcut($this->value, $offset, $length));
         return new StringsManipulators(substr($this->value, $offset, $length));
@@ -44,12 +47,14 @@ class StringsManipulators implements Stringable
 
     public function toUpperFirst(): static
     {
-        return new StringsManipulators(mb_ucfirst($this->value));
+        $result = (function_exists('mb_ucfirst')) ? mb_ucfirst($this->value) : ucfirst($this->value);
+        return new StringsManipulators($result);
     }
 
     public function toLowerFirst(): static
     {
-        return new StringsManipulators(mb_lcfirst($this->value));
+        $result = (function_exists('mb_lcfirst')) ? mb_lcfirst($this->value) : lcfirst($this->value);
+        return new StringsManipulators($result);
     }
 
     public function toUpperWords(string $separators = " \t\r\n\f\v"): static
@@ -59,17 +64,20 @@ class StringsManipulators implements Stringable
 
     public function toUpper(): static
     {
-        return new StringsManipulators(mb_strtoupper($this->value));
+        $result = (function_exists('mb_strtoupper')) ? mb_strtoupper($this->value) : strtoupper($this->value);
+        return new StringsManipulators($result);
     }
 
     public function toLower(): static
     {
-        return new StringsManipulators(mb_strtolower($this->value));
+        $result = (function_exists('mb_strtolower')) ? mb_strtolower($this->value) : strtolower($this->value);
+        return new StringsManipulators($result);
     }
 
     public function padding(int $length, string $pad_string = ' ', int $pad_type = STR_PAD_LEFT): static
     {
-        return new StringsManipulators(mb_str_pad($this->value, $length, $pad_string, $pad_type));
+        $result = (function_exists('mb_str_pad')) ? mb_str_pad($this->value, $length, $pad_string, $pad_type) : str_pad($this->value, $length, $pad_string, $pad_type);
+        return new StringsManipulators($result);
     }
 
     public function preppend(string $value, string $separator = " "): static
@@ -84,8 +92,8 @@ class StringsManipulators implements Stringable
 
     public function chunk(int $length = 76, string $separator = "\r\n"): static
     {
-        return new StringsManipulators(implode($separator, mb_str_split($this->value, $length)));
-        return new StringsManipulators(chunk_split($this->value, $length, $separator));
+        $result = (function_exists('mb_str_split')) ? implode($separator, mb_str_split($this->value, $length)) : chunk_split($this->value, $length, $separator);
+        return new StringsManipulators($result);
     }
 
     public function wordWrap(int $length = 76, string $break = "\n", bool $cut_words = false): static
@@ -95,17 +103,20 @@ class StringsManipulators implements Stringable
 
     public function trim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(mb_trim($this->value, $chars));
+        $result = (function_exists('mb_trim')) ? mb_trim($this->value, $chars) : trim($this->value, $chars);
+        return new StringsManipulators($result);
     }
 
     public function ltrim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(mb_ltrim($this->value, $chars));
+        $result = (function_exists('mb_ltrim')) ? mb_ltrim($this->value, $chars) : ltrim($this->value, $chars);
+        return new StringsManipulators($result);
     }
 
     public function rtrim(string $chars = " \n\r\t\v\x00"): static
     {
-        return new StringsManipulators(mb_rtrim($this->value, $chars));
+        $result = (function_exists('mb_rtrim')) ? mb_rtrim($this->value, $chars) : rtrim($this->value, $chars);
+        return new StringsManipulators($result);
     }
 
     /*public function crc32(): static
@@ -158,14 +169,14 @@ class StringsManipulators implements Stringable
     public function convertEncoding(string $to_map = 'UTF-8', ?string $from_map = null): static
     {
         //if (!@mb_check_encoding($this->value, $to_map)) {
+        if (empty($from_map)) {
+            $encodings = mb_list_encodings();
+            $from_map = mb_detect_encoding($this->value, $encodings, true);
             if (empty($from_map)) {
-                $encodings = mb_list_encodings();
-                $from_map = mb_detect_encoding($this->value, $encodings, true);
-                if (empty($from_map)) {
-                    $from_map = mb_detect_encoding($this->value, $encodings, false);
-                }
+                $from_map = mb_detect_encoding($this->value, $encodings, false);
             }
-            return new StringsManipulators(mb_convert_encoding($this->value, $to_map, $from_map));
+        }
+        return new StringsManipulators(mb_convert_encoding($this->value, $to_map, $from_map));
         //}
         return $this;
     }

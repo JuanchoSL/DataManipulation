@@ -98,9 +98,14 @@ class StringManipulatorsTest extends TestCase
     }
     public function testPadding()
     {
-        $string = new StringsManipulators("abcde€");
-        $this->assertEquals("----abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
-        $this->assertEquals("abcde€----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+        if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
+            $string = new StringsManipulators("abcde€");
+            $this->assertEquals("----abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
+            $this->assertEquals("abcde€----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+        }
+        $string = new StringsManipulators("abcde");
+        $this->assertEquals("-----abcde", (string) $string->padding(10, '-', STR_PAD_LEFT));
+        $this->assertEquals("abcde-----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
     }
     public function testTrim()
     {

@@ -11,6 +11,12 @@ use JuanchoSL\DataManipulation\Manipulators\Strings\DateManipulators;
 
 class DateManipulatorsTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        ini_set("date.timezone", "Europe/Madrid");
+    }
+
     public function testDateStarthourAsString()
     {
         $timestamp = strtotime('2025-11-30');

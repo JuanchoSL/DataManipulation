@@ -29,4 +29,9 @@ class ArrayMapManipulators
     {
         return $this->sanitize('array_unique');
     }
+
+    public function keyToCase(int $to_case = CASE_LOWER): static
+    {
+        return $this->sanitize('array_change_key_case', $to_case);
+    }
 }

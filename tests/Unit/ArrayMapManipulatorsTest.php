@@ -75,5 +75,17 @@ class ArrayMapManipulatorsTest extends TestCase
         }
     }
 
+    public function testKeyCase()
+    {
+        $data = [['name' => 'pepe', 'surname' => 'santos'], ['name' => 'manuel', 'surname' => 'dominguez'], ['name' => 'ana', 'surname' => 'caballero']];
 
+        $tool = new ArrayMapManipulators();
+        $tool->keyToCase(CASE_UPPER);
+        $results = $tool(...$data);
+        foreach ($results as $result) {
+            $this->assertIsArray($result);
+            $this->assertArrayHasKey('NAME', $result);
+            $this->assertArrayNotHasKey('name', $result);
+        }
+    }
 }

@@ -139,6 +139,16 @@ class ArrayManipulatorsTest extends TestCase
             $this->assertIsNotArray($result);
         }
     }
+    public function testKeyCase()
+    {
+        $data = ['name' => 'pepe', 'surname' => 'santos'];
+
+        $tool = new ArrayManipulators();
+        $tool->keyToCase(CASE_UPPER);
+        $results = $tool($data);
+        $this->assertArrayHasKey('NAME', $results);
+        $this->assertArrayNotHasKey('name', $results);
+    }
     public function testUnique()
     {
 

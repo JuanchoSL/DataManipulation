@@ -71,9 +71,14 @@ class ArrayManipulators
     {
         return $this->sanitize('array_sum');
     }
-    
+
     public function product(): static
     {
         return $this->sanitize('array_product');
+    }
+
+    public function keyToCase(int $to_case = CASE_LOWER): static
+    {
+        return $this->sanitize('array_change_key_case', func_get_args());
     }
 }

@@ -5,8 +5,11 @@
     "license": "MIT",
     "homepage": "https://github.com/JuanchoSL/DataManipulation",
     "keywords": [
-        "log",
-        "debug"
+        "variables",
+        "manipulation",
+        "strings",
+        "numbers",
+        "arrays"
     ],
     "authors": [
         {

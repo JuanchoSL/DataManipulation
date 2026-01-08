@@ -148,4 +148,28 @@ class StringManipulatorsTest extends TestCase
             $this->assertEquals("juan\nsanchez\nlecegui", (string) $string->eol("\n"));
         }
     }
+
+    public function testSubStrBeforeAfter()
+    {
+        $string = new StringsManipulators("asdfghj:qwertyu");
+        $this->assertEquals("asdfghj", (string) $string->substringBeforeChar(':'));
+        $this->assertEquals("asdfgh", (string) $string->substringBeforeChar('j:q'));
+        $this->assertEquals("qwertyu", (string) $string->substringAfterChar(':'));
+        $this->assertEquals("wertyu", (string) $string->substringAfterChar('j:q'));
+    }
+
+    public function testExplode()
+    {
+        $string = new StringsManipulators("asdfghj:qwertyu");
+        $actual = $string->explode(':');
+        $this->assertContainsOnlyInstancesOf(StringsManipulators::class, $actual);
+        $this->assertCount(2, $actual);
+        $this->assertEquals("asdfghj", (string) $actual[0]);
+        $this->assertEquals("qwertyu", (string) $actual[1]);
+        $actual = $string->explode('j:q');
+        $this->assertContainsOnlyInstancesOf(StringsManipulators::class, $actual);
+        $this->assertCount(2, $actual);
+        $this->assertEquals("asdfgh", (string) $actual[0]);
+        $this->assertEquals("wertyu", (string) $actual[1]);
+    }
 }

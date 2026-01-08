@@ -18,7 +18,9 @@ Perform actions over strings, using multibyte functions where are available, and
 
 | Manipulation          | MultiByte | Description |
 | --------------------- |:---------:| -------- |
-| substring             |     X     | Extract a part of a string, starting from indicated char and with the desired lenght         |
+| substring             |     X     | Extract a part of a string, starting from indicated offset and with the desired lenght         |
+| substringBeforeChar   |     X     | Extract a part of a string, ending at indicated char          |
+| substringAfterChar    |     X     | Extract a part of a string, starting from indicated char          |
 | repeat                |          | Repeat the string n times         |
 | format                |          | Apply format, with indicated values, to the string         |
 | replace               |          | Search and replace a substring, can be case sensitive or not         |
@@ -38,6 +40,7 @@ Perform actions over strings, using multibyte functions where are available, and
 | rtrim                 |     X      | Clean a string, removing spaces or control chars at the end of the string         |
 | eol                   |     X      | Convert breaklines chars (\r,\n,\r\n) to the desired new char, in order to ensure the use of PHP_EOL constant for unknow origins        |
 | shuffle               |          | Apply a random shuffle          |
+| explode               |          | Explode a string and returns a StringManipulators collection for every parts          |
 | rotate13              |          | Apply a rot13 transformation        |
 | md5                   |          | Calculate the md5         |
 | quotedPrintableEncode |          | Convert form 8bits string to QP string, following the rules from RFC2045         |

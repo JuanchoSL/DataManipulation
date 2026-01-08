@@ -2,6 +2,7 @@
 
 namespace JuanchoSL\DataManipulation\Manipulators\Strings;
 
+use JuanchoSL\DataManipulation\Manipulators\Arrays\ArrayManipulators;
 use Stringable;
 
 class StringsManipulators implements Stringable
@@ -14,14 +15,21 @@ class StringsManipulators implements Stringable
         $this->value = $value;
     }
 
+    public function substringBeforeChar(string $char): static
+    {
+        $position = stripos($this->value, $char);
+        return $this->substring(0, $position);
+    }
+    public function substringAfterChar(string $char): static
+    {
+        $position = stripos($this->value, $char);
+        return $this->substring($position + mb_strlen($char));
+    }
+
     public function substring(int $offset, ?int $length = null): static
     {
         $result = (function_exists('mb_substr')) ? mb_substr($this->value, $offset, $length) : substr($this->value, $offset, $length);
         return new StringsManipulators($result);
-
-        return new StringsManipulators(mb_substr($this->value, $offset, $length));
-        return new StringsManipulators(mb_strcut($this->value, $offset, $length));
-        return new StringsManipulators(substr($this->value, $offset, $length));
     }
 
     public function repeat(int $times): static
@@ -219,6 +227,13 @@ class StringsManipulators implements Stringable
     public function hexToBin(): static
     {
         return new StringsManipulators(hex2bin($this->value));
+    }
+
+    public function explode(string $separator, int $limit = PHP_INT_MAX): iterable
+    {
+        return array_map(function ($partial) {
+            return new StringsManipulators($partial);
+        }, explode($separator, $this->value, $limit));
     }
 
     public function __tostring(): string

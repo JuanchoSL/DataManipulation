@@ -221,15 +221,12 @@ class StringsManipulators implements Stringable
 
     public function base64UrlEncode(): static
     {
-        return (new StringsManipulators($this->value))->base64Encode()->replace('+/', '-_')->rtrim('=');
-        $base64Url = strtr(base64_encode($data), '+/', '-_');
-        return rtrim($base64Url, '=');
+        return (new StringsManipulators($this->value))->base64Encode()->replace('+', '-')->replace('/', '_')->rtrim('=');
     }
 
     public function base64UrlDecode(): static
     {
-        return (new StringsManipulators($this->value))->replace('-_', '+/')->base64Decode();
-        return base64_decode(strtr($base64Url, '-_', '+/'));
+        return (new StringsManipulators($this->value))->replace('-', '+')->replace('_', '/')->base64Decode();
     }
 
     public function binToHex(): static

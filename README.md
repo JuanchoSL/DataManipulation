@@ -51,8 +51,11 @@ Perform actions over strings, using multibyte functions where are available, and
 | urlDecode             |          | Decode a rawurlencoded string, following the rules from RFC3986        |
 | base64Encode          |          | Encode to Base 64         |
 | base64Decode          |          | Decode from Base 64         |
+| base64UrlEncode       |          | Encode to Base 64 URL safe        |
+| base64UrlDecode       |          | Decode from Base 64 URL safe         |
 | binToHex              |          | Convert the binary string to hexadecimal equivalent         |
 | hexToBin              |          | Convert the hexadecimal string to binary data         |
+| hashHmac              |          | Calculate the hash, using an algorithm and key, of a string         |
 
 ### Numbers
 

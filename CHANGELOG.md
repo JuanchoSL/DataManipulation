@@ -1,5 +1,16 @@
 # Change Log - DataManipulation
 
+## [1.0.2] - 2026-01-30
+
+### Added
+
+- StringManipulators::base64UrlX methods, in order to retrieve a new StringManipulators with url safe base64 encoding/decoding
+- StringManipulators::hashHmac method, in order to retrieve a new StringManipulators with digested value
+
+### Changed
+
+### Fixed
+
 ## [1.0.1] - 2026-01-09
 
 ### Added

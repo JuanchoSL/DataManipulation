@@ -77,6 +77,13 @@ class StringManipulatorsTest extends TestCase
         $this->assertNotEquals("àèìòù", (string) $string = $string->base64Encode());
         $this->assertEquals("àèìòù", (string) $string = $string->base64Decode());
     }
+    public function testBase64Url()
+    {
+        $original = 'usuario:password';
+        $string = new StringsManipulators($original);
+        $this->assertNotEquals("àèìòù", (string) $string = $string->base64UrlEncode());
+        $this->assertEquals($original, (string) $string = $string->base64UrlDecode());
+    }
     public function testUU()
     {
         $string = new StringsManipulators("àèìòù");
@@ -156,6 +163,12 @@ class StringManipulatorsTest extends TestCase
         $this->assertEquals("asdfgh", (string) $string->substringBeforeChar('j:q'));
         $this->assertEquals("qwertyu", (string) $string->substringAfterChar(':'));
         $this->assertEquals("wertyu", (string) $string->substringAfterChar('j:q'));
+    }
+    
+    public function testHashHmac()
+    {
+        $string = new StringsManipulators("asdfghj");
+        $this->assertEquals(hash_hmac('sha256', "asdfghj", 'qwerty'), (string) $string->hashHmac('sha256', 'qwerty'));
     }
 
     public function testExplode()

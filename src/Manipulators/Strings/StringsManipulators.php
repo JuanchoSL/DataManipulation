@@ -219,6 +219,19 @@ class StringsManipulators implements Stringable
         return new StringsManipulators(base64_decode($this->value));
     }
 
+    public function base64UrlEncode(): static
+    {
+        return (new StringsManipulators($this->value))->base64Encode()->replace('+/', '-_')->rtrim('=');
+        $base64Url = strtr(base64_encode($data), '+/', '-_');
+        return rtrim($base64Url, '=');
+    }
+
+    public function base64UrlDecode(): static
+    {
+        return (new StringsManipulators($this->value))->replace('-_', '+/')->base64Decode();
+        return base64_decode(strtr($base64Url, '-_', '+/'));
+    }
+
     public function binToHex(): static
     {
         return new StringsManipulators(bin2hex($this->value));
@@ -227,6 +240,11 @@ class StringsManipulators implements Stringable
     public function hexToBin(): static
     {
         return new StringsManipulators(hex2bin($this->value));
+    }
+
+    public function hashHmac(string $algorithm, string $key): static
+    {
+        return new StringsManipulators(hash_hmac($algorithm, $this->value, $key, false));
     }
 
     public function explode(string $separator, int $limit = PHP_INT_MAX): iterable

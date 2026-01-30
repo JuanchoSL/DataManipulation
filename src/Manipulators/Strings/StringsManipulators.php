@@ -239,9 +239,9 @@ class StringsManipulators implements Stringable
         return new StringsManipulators(hex2bin($this->value));
     }
 
-    public function hashHmac(string $algorithm, string $key): static
+    public function hashHmac(string $algorithm, string $key, bool $binary = False): static
     {
-        return new StringsManipulators(hash_hmac($algorithm, $this->value, $key, false));
+        return new StringsManipulators(hash_hmac($algorithm, $this->value, $key, $binary));
     }
 
     public function explode(string $separator, int $limit = PHP_INT_MAX): iterable

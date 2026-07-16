@@ -41,6 +41,7 @@ Perform actions over strings, using multibyte functions where are available, and
 | eol                   |     X      | Convert breaklines chars (\r,\n,\r\n) to the desired new char, in order to ensure the use of PHP_EOL constant for unknow origins        |
 | shuffle               |          | Apply a random shuffle          |
 | explode               |          | Explode a string and returns a StringManipulators collection for every parts          |
+| split                 |          | Cut a string with a byte lenght defined and returns a StringManipulators collection for every parts          |
 | rotate13              |          | Apply a rot13 transformation        |
 | md5                   |          | Calculate the md5         |
 | quotedPrintableEncode |          | Convert form 8bits string to QP string, following the rules from RFC2045         |

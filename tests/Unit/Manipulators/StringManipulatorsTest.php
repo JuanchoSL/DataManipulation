@@ -45,6 +45,12 @@ class StringManipulatorsTest extends TestCase
     }
     public function testReverse()
     {
+        $string = new StringsManipulators("日に本ほん語ご");
+        $this->assertEquals("ご語んほ本に日", (string) $string = $string->reverse());
+        $string = new StringsManipulators("火车票");
+        $this->assertEquals("票车火", (string) $string = $string->reverse());
+        $string = new StringsManipulators("\xFF\xFA");
+        $this->assertEquals("\xFA\xFF", (string) $string = $string->reverse());
         $string = new StringsManipulators("abcdef");
         $this->assertEquals("fedcba", (string) $string = $string->reverse());
     }
@@ -164,7 +170,7 @@ class StringManipulatorsTest extends TestCase
         $this->assertEquals("qwertyu", (string) $string->substringAfterChar(':'));
         $this->assertEquals("wertyu", (string) $string->substringAfterChar('j:q'));
     }
-    
+
     public function testHashHmac()
     {
         $string = new StringsManipulators("asdfghj");

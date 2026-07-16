@@ -50,7 +50,16 @@ class StringsManipulators implements Stringable
 
     public function reverse(): static
     {
-        return new StringsManipulators(strrev($this->value));
+        $value = new StringsManipulators('');
+        if (mb_strlen($this->value) < strlen($this->value)) {
+            $elements = array_reverse($this->split(1));
+            foreach ($elements as $element) {
+                $value = $value->concatenation((string) $element, '');
+            }
+        } else {
+            $value = $value->concatenation(strrev($this->value), '');
+        }
+        return $value;
     }
 
     public function toUpperFirst(): static
@@ -100,6 +109,13 @@ class StringsManipulators implements Stringable
 
     public function chunk(int $length = 76, string $separator = "\r\n"): static
     {
+        $value = new StringsManipulators('');
+        $elements = $this->split($length);
+        foreach ($elements as $element) {
+            $value = $value->concatenation((string) $element, $separator);
+        }
+        return $value->trim($separator);
+
         $result = (function_exists('mb_str_split')) ? implode($separator, mb_str_split($this->value, $length)) : chunk_split($this->value, $length, $separator);
         return new StringsManipulators($result);
     }
@@ -249,6 +265,14 @@ class StringsManipulators implements Stringable
         return array_map(function ($partial) {
             return new StringsManipulators($partial);
         }, explode($separator, $this->value, $limit));
+    }
+
+    public function split(int $length = 1): iterable
+    {
+        $data = (mb_strlen($this->value) < strlen($this->value)) ? mb_str_split($this->value, $length) : str_split($this->value, $length);
+        return array_map(function ($partial) {
+            return new StringsManipulators($partial);
+        }, $data);
     }
 
     public function __tostring(): string

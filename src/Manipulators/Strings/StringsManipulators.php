@@ -255,6 +255,11 @@ class StringsManipulators implements Stringable
         return new StringsManipulators(hex2bin($this->value));
     }
 
+    public function hash(string $algorithm, bool $binary = false): static
+    {
+        return new StringsManipulators(hash($algorithm, $this->value, $binary));
+    }
+
     public function hashHmac(string $algorithm, string $key, bool $binary = false): static
     {
         return new StringsManipulators(hash_hmac($algorithm, $this->value, $key, $binary));

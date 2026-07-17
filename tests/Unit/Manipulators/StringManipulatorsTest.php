@@ -173,8 +173,29 @@ class StringManipulatorsTest extends TestCase
 
     public function testHashHmac()
     {
-        $string = new StringsManipulators("asdfghj");
-        $this->assertEquals(hash_hmac('sha256', "asdfghj", 'qwerty'), (string) $string->hashHmac('sha256', 'qwerty'));
+        $value = "asdfghj";
+        $key = 'qwerty';
+        $string = new StringsManipulators($value);
+        foreach (['md5', 'sha1', 'sha256'] as $algo) {
+            $this->assertEquals(hash_hmac($algo, $value, $key), (string) $string->hashHmac($algo, $key));
+            $this->assertNotEquals(hash($algo, $value), (string) $string->hashHmac($algo, $key));
+            $this->assertFalse(hash_equals(hash($algo, $value), (string) $string->hashHmac($algo, $key)));
+            $this->assertTrue(hash_equals(hash_hmac($algo, $value, $key), (string) $string->hashHmac($algo, $key)));
+        }
+    }
+    public function testHash()
+    {
+        $value = "asdfghj";
+        $key = 'qwerty';
+        $string = new StringsManipulators($value);
+        foreach (['md5', 'sha1', 'sha256'] as $algo) {
+            $this->assertTrue(hash_equals(hash($algo, $value), (string) $string->hash($algo)));
+            $this->assertEquals(hash($algo, $value), (string) $string->hash($algo));
+            $this->assertNotEquals(hash_hmac($algo, $value, $key), (string) $string->hash($algo));
+            $this->assertFalse(hash_equals(hash_hmac($algo, $value, $key), (string) $string->hash($algo)));
+        }
+
+        //        $this->assertEquals(hash('sha256', "asdfghj"), (string) $string->hash('sha256', 'qwerty'));
     }
 
     public function testExplode()

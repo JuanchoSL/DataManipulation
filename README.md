@@ -56,7 +56,8 @@ Perform actions over strings, using multibyte functions where are available, and
 | base64UrlDecode       |          | Decode from Base 64 URL safe         |
 | binToHex              |          | Convert the binary string to hexadecimal equivalent         |
 | hexToBin              |          | Convert the hexadecimal string to binary data         |
-| hashHmac              |          | Calculate the hash, using an algorithm and key, of a string         |
+| hash                  |          | Calculate the hash, using an algorithm and key, of a string         |
+| hashHmac              |          | Calculate the hash with HMAC method, using an algorithm and key, of a string         |
 
 ### Numbers
 

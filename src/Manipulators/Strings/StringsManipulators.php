@@ -128,7 +128,7 @@ class StringsManipulators implements Stringable
         if (StringValidation::isMultibyte($this->value) OR !function_exists('ucwords')) {
             foreach (mb_str_split($separators) as $separator) {
                 $new = new StringsManipulators("");
-                $iterable = new StringsManipulators($result)->explode($separator);
+                $iterable = (new StringsManipulators($result))->explode($separator);
                 foreach ($iterable as $char) {
                     $new = $new->concatenation((string) $char->toUpperFirst(), $separator);
                 }

@@ -2,7 +2,10 @@
 
 namespace JuanchoSL\DataManipulation\Tests\Unit\Manipulators;
 
+use JuanchoSL\DataManipulation\Manipulators\Strings\DelayedStringsManipulators;
 use JuanchoSL\DataManipulation\Manipulators\Strings\StringsManipulators;
+use JuanchoSL\Validators\Types\Strings\StringValidation;
+use JuanchoSL\Validators\Types\Strings\StringValidations;
 use PHPUnit\Framework\TestCase;
 
 class StringManipulatorsTest extends TestCase
@@ -29,13 +32,27 @@ class StringManipulatorsTest extends TestCase
     public function testReplace()
     {
         $string = new StringsManipulators("juan sanchez lecegui");
-        $this->assertEquals("juan sánchez lecegui", (string) $string = $string->replace('sanchez', 'sánchez'));
+        $this->assertEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('sanchez', 'sánchez', true));
+        $this->assertEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('sanchez', 'sánchez', false));
+        $this->assertEqualsCanonicalizing("juan sanchez lecegui", (string) $string->replace('Sanchez', 'sánchez', true));
+        $this->assertEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('Sanchez', 'sánchez', false));
+        $this->assertNotEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('Sanchez', 'Sánchez', false));
+        $this->assertEqualsCanonicalizing("juan sanchez lecegui", (string) $string->replace('Sanchez', 'Sánchez', true));
+        $this->assertEqualsCanonicalizing("juan Sánchez lecegui", (string) $string->replace('sanchez', 'Sánchez', false));
+        $this->assertNotEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('sanchez', 'Sánchez', false));
+        $this->assertEqualsCanonicalizing("juan sanchez lecegui", (string) $string->replace('Sanchez', 'Sánchez', true));
+        $this->assertEqualsCanonicalizing("juan Sánchez lecegui", (string) $string->replace('sanchez', 'Sánchez', false));
+        $this->assertNotEqualsCanonicalizing("juan sánchez lecegui", (string) $string->replace('sanchez', 'Sánchez', false));
     }
+
     public function testSubstring()
     {
         $string = new StringsManipulators("juan sánchez lecegui");
-        $this->assertEquals("sánchez", (string) $string = $string->substring(5, mb_strlen('sánchez')));
+        $this->assertEquals("sánchez", (string) $string->substring(5, mb_strlen('sánchez')));
+        $this->assertEquals("sánchez lecegui", (string) $string->substring(5));
+        $this->assertEquals("sánchez lecegu", (string) $string->substring(5, -1));
     }
+
     public function testRepeat()
     {
         $string = new StringsManipulators("*");
@@ -111,15 +128,39 @@ class StringManipulatorsTest extends TestCase
     }
     public function testPadding()
     {
-        if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-            $string = new StringsManipulators("abcde€");
-            $this->assertEquals("----abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
-            $this->assertEquals("abcde€----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
-        }
+        $string = new StringsManipulators("abcde€");
+        $this->assertEquals("----abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
+        $this->assertEquals("abcde€----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("€abcde€");
+        $this->assertEquals("---€abcde€", (string) $string->padding(10, '-', STR_PAD_LEFT));
+        $this->assertEquals("€abcde€---", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("abcde");
+        $this->assertEquals("€€€€€abcde", (string) $string->padding(10, '€', STR_PAD_LEFT));
+        $this->assertEquals("abcde€€€€€", (string) $string->padding(10, '€', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("ñabcdñ");
+        $this->assertEquals("€€€€ñabcdñ", (string) $string->padding(10, '€', STR_PAD_LEFT));
+        $this->assertEquals("ñabcdñ€€€€", (string) $string->padding(10, '€', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("ñabcde");
+        $this->assertEquals("€€€€ñabcde", (string) $string->padding(10, '€', STR_PAD_LEFT));
+        $this->assertEquals("ñabcde€€€€", (string) $string->padding(10, '€', STR_PAD_RIGHT));
+
         $string = new StringsManipulators("abcde");
         $this->assertEquals("-----abcde", (string) $string->padding(10, '-', STR_PAD_LEFT));
         $this->assertEquals("abcde-----", (string) $string->padding(10, '-', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("abcde");
+        $this->assertEquals("ñññññabcde", (string) $string->padding(10, 'ññ', STR_PAD_LEFT));
+        $this->assertEquals("abcdeñññññ", (string) $string->padding(10, 'ññ', STR_PAD_RIGHT));
+
+        $string = new StringsManipulators("abcde");
+        $this->assertEquals("ñ€ñ€ñabcde", (string) $string->padding(10, 'ñ€', STR_PAD_LEFT));
+        $this->assertEquals("abcdeñ€ñ€ñ", (string) $string->padding(10, 'ñ€', STR_PAD_RIGHT));
     }
+
     public function testTrim()
     {
         $string = new StringsManipulators(" abcde ");
@@ -127,11 +168,14 @@ class StringManipulatorsTest extends TestCase
         $this->assertEquals("abcde ", (string) $string->ltrim());
         $this->assertEquals(" abcde", (string) $string->rtrim());
     }
+
     public function testMd5()
     {
         $string = new StringsManipulators("abcde");
+        $this->assertEquals(md5("abcde"), (string) $string->md5());
         $this->assertEquals(32, strlen((string) $string = $string->md5()));
     }
+
     public function testChunk()
     {
         $string = new StringsManipulators("abcdefghijklmnñopqrstuvwxyz");
@@ -142,8 +186,28 @@ class StringManipulatorsTest extends TestCase
     {
         $string = new StringsManipulators("juan sanchez lecegui");
         $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(10, "\r\n"));
-        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string = $string->wordWrap(10, "\r\n", true));
-        $this->assertEquals("juan\r\nsanch\r\nez\r\nleceg\r\nui", (string) $string = $string->wordWrap(5, "\r\n", true));
+        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(10, "\r\n", true));
+        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(10, "\r\n", false));
+        $this->assertEquals("juan\r\nsanch\r\nez\r\nleceg\r\nui", (string) $string->wordWrap(5, "\r\n", true));
+        $this->assertEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(5, "\r\n", false));
+
+        $string = new StringsManipulators("€€€€€€ ññññññ");
+        $this->assertEquals("€€€\r\n€€€\r\nñññ\r\nñññ", (string) $string->wordWrap(3, "\r\n", true));
+        $this->assertEquals("€€€€€€\r\nññññññ", (string) $string->wordWrap(3, "\r\n", false));
+
+        $string = new StringsManipulators("sanchez lecegui juan");
+        $this->assertEquals("sanchez\r\nlecegui\r\njuan", (string) $string->wordWrap(10, "\r\n", true));
+        $this->assertEquals("sanchez\r\nlecegui\r\njuan", (string) $string->wordWrap(10, "\r\n", false));
+        $this->assertEquals("sanch\r\nez\r\nleceg\r\nui\r\njuan", (string) $string->wordWrap(5, "\r\n", true));
+        $this->assertEquals("sanchez\r\nlecegui\r\njuan", (string) $string->wordWrap(5, "\r\n", false));
+    }
+
+    public function testWordWrapFalse()
+    {
+        $string = new StringsManipulators("juan sanchez lecegui");
+        $this->assertEquals("juan sanchez lecegui", (string) $string->wordWrap(100, "\r\n"));
+        $this->assertNotEquals("juan\r\nsanchez\r\nlecegui", (string) $string->wordWrap(100, "\r\n"));
+        $this->assertStringNotContainsString("\r\n", (string) $string = $string->wordWrap(100, "\r\n"));
     }
 
     public function testEOL()
@@ -169,6 +233,39 @@ class StringManipulatorsTest extends TestCase
         $this->assertEquals("asdfgh", (string) $string->substringBeforeChar('j:q'));
         $this->assertEquals("qwertyu", (string) $string->substringAfterChar(':'));
         $this->assertEquals("wertyu", (string) $string->substringAfterChar('j:q'));
+
+        $string = new StringsManipulators("asdfghj:qwertyu:zxcvb");
+        $this->assertEquals("asdfghj", (string) $string->substringBeforeChar(':'));
+        $this->assertEquals("asdfgh", (string) $string->substringBeforeChar('j:q'));
+        $this->assertEquals("qwertyu:zxcvb", (string) $string->substringAfterChar(':'));
+        $this->assertEquals("wertyu:zxcvb", (string) $string->substringAfterChar('j:q'));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar('|'));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar('|', 1));
+        $this->assertEquals("", (string) $string->substringBeforeChar('|', -1));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar('j|q'));
+        $this->assertEquals("", (string) $string->substringAfterChar('|'));
+        $this->assertEquals("", (string) $string->substringAfterChar('j|q'));
+
+        $string = new StringsManipulators("asdfghj:qwertyu:zxcvb");
+        $this->assertEquals("asdfghj:qwertyu", (string) $string->substringBeforeChar(':', 2));
+        $this->assertEquals("asdfghj:qwertyu", (string) $string->substringBeforeChar(':', -1));
+        $this->assertEquals("asdfghj", (string) $string->substringBeforeChar(':', -2));
+        $this->assertEquals("", (string) $string->substringBeforeChar(':', -3));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar('j:q', 2));
+        $this->assertEquals("zxcvb", (string) $string->substringAfterChar(':', 2));
+        $this->assertEquals("zxcvb", (string) $string->substringAfterChar(':', -1));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringAfterChar(':', -2));
+        $this->assertEquals("", (string) $string->substringAfterChar('j:q', 2));
+    }
+
+    public function testSubStrBeforeAfterFalse()
+    {
+        $raw_string = "asdfghj:qwertyu";
+        $string = new StringsManipulators($raw_string);
+        $this->assertEquals($raw_string, (string) $string->substringBeforeChar('|'));
+        $this->assertEquals($raw_string, (string) $string->substringBeforeChar('j|q'));
+        $this->assertEquals('', (string) $string->substringAfterChar('|'));
+        $this->assertEquals('', (string) $string->substringAfterChar('j|q'));
     }
 
     public function testHashHmac()

@@ -2,7 +2,10 @@
 
 namespace JuanchoSL\DataManipulation\Manipulators\Strings;
 
-use JuanchoSL\DataManipulation\Manipulators\Arrays\ArrayManipulators;
+use JuanchoSL\DataManipulation\Manipulators\Numbers\NumbersManipulators;
+use JuanchoSL\Validators\Types\Numbers\NumberValidation;
+use JuanchoSL\Validators\Types\Strings\StringValidation;
+use JuanchoSL\Validators\Types\Strings\StringValidations;
 use Stringable;
 
 class StringsManipulators implements Stringable
@@ -15,15 +18,60 @@ class StringsManipulators implements Stringable
         $this->value = $value;
     }
 
-    public function substringBeforeChar(string $char): static
+    public function substringBeforeChar(string $char, int $occurrence = 1): static
     {
-        $position = stripos($this->value, $char);
-        return $this->substring(0, $position);
+        $new = new StringsManipulators($this->value);
+        $count = mb_substr_count($this->value, $char);
+        if (NumberValidation::isValueLessThanOrEquals(abs($occurrence), $count)) {
+            if (StringValidation::isValueContaining($this->value, $char)) {
+                if ($occurrence < 0) {
+                    $occurrence = $count + ($occurrence + 1);
+                }
+                $i = 1;
+                if ($occurrence > 1) {
+                    $str = strtok($this->value, $char);
+                    $new = new StringsManipulators($str);
+                    do {
+                        if (($str = strtok($char)) !== false) {
+                            $new = $new->concatenation($str, $char);
+                        }
+                    } while (++$i < $occurrence && !empty($str));
+                } else {
+                    $new = $new->substring(0, stripos($this->value, $char));
+                }
+            }
+        } elseif ($occurrence < 0) {
+            $new = $new->replace($this->value, '', true);
+        }
+        return $new;
     }
-    public function substringAfterChar(string $char): static
+
+    public function substringAfterChar(string $char, int $occurrence = 1): static
     {
-        $position = stripos($this->value, $char);
-        return $this->substring($position + mb_strlen($char));
+        $new = new StringsManipulators($this->value);
+        $count = mb_substr_count($this->value, $char);
+        if (NumberValidation::isValueLessThanOrEquals(abs($occurrence), $count)) {
+            if (StringValidation::isValueContaining($this->value, $char)) {
+                if ($occurrence < 0) {
+                    $occurrence = $count - ($occurrence + 1);
+                }
+                $i = 1;
+                if ($occurrence > 1) {
+                    $str = strtok($this->value, $char);
+                    do {
+                        if (($_str = strtok($char)) !== false) {
+                            $str .= $char . $_str;
+                        }
+                    } while (++$i < $occurrence && !empty($_str));
+                    $new = $new->replace($str . $char, '', true);
+                } else {
+                    $new = $new->substring(stripos($this->value, $char) + mb_strlen($char));
+                }
+            }
+        } elseif ($occurrence > 0) {
+            $new = $new->replace($this->value, '', true);
+        }
+        return $new;
     }
 
     public function substring(int $offset, ?int $length = null): static
@@ -44,14 +92,14 @@ class StringsManipulators implements Stringable
 
     public function replace(string $search, string $replace, bool $case_sensitive = true): static
     {
-        $result = ($case_sensitive) ? str_ireplace($search, $replace, $this->value) : str_replace($search, $replace, $this->value);
+        $result = ($case_sensitive) ? str_replace($search, $replace, $this->value) : str_ireplace($search, $replace, $this->value);
         return new StringsManipulators($result);
     }
 
     public function reverse(): static
     {
         $value = new StringsManipulators('');
-        if (mb_strlen($this->value) < strlen($this->value)) {
+        if (StringValidation::isMultibyte($this->value)) {
             $elements = array_reverse($this->split(1));
             foreach ($elements as $element) {
                 $value = $value->concatenation((string) $element, '');
@@ -76,7 +124,20 @@ class StringsManipulators implements Stringable
 
     public function toUpperWords(string $separators = " \t\r\n\f\v"): static
     {
-        return new StringsManipulators(ucwords($this->value, $separators));
+        $result = $this->value;
+        if (StringValidation::isMultibyte($this->value) OR !function_exists('ucwords')) {
+            foreach (mb_str_split($separators) as $separator) {
+                $new = new StringsManipulators("");
+                $iterable = new StringsManipulators($result)->explode($separator);
+                foreach ($iterable as $char) {
+                    $new = $new->concatenation((string) $char->toUpperFirst(), $separator);
+                }
+                $result = (string) $new->ltrim($separator);
+            }
+        } else {
+            $result = ucwords($this->value, $separators);
+        }
+        return new StringsManipulators($result);
     }
 
     public function toUpper(): static
@@ -93,7 +154,21 @@ class StringsManipulators implements Stringable
 
     public function padding(int $length, string $pad_string = ' ', int $pad_type = STR_PAD_LEFT): static
     {
-        $result = (function_exists('mb_str_pad')) ? mb_str_pad($this->value, $length, $pad_string, $pad_type) : str_pad($this->value, $length, $pad_string, $pad_type);
+        if (function_exists('mb_str_pad')) {
+            $result = mb_str_pad($this->value, $length, $pad_string, $pad_type);
+        } else {
+            $val = (new StringValidations())->isMultibyte();
+            if ($val->getResult($this->value) OR $val->getResult($pad_string)) {
+                $length = (new NumbersManipulators($length))
+                    ->sub(mb_strlen($this->value))
+                    ->product(strlen($pad_string))
+                    ->division(mb_strlen($pad_string))
+                    ->roundToLowInteger()
+                    ->sum(strlen($this->value))
+                    ->__tostring();
+            }
+            $result = str_pad($this->value, +$length, $pad_string, $pad_type);
+        }
         return new StringsManipulators($result);
     }
 
@@ -115,13 +190,38 @@ class StringsManipulators implements Stringable
             $value = $value->concatenation((string) $element, $separator);
         }
         return $value->trim($separator);
-
-        $result = (function_exists('mb_str_split')) ? implode($separator, mb_str_split($this->value, $length)) : chunk_split($this->value, $length, $separator);
-        return new StringsManipulators($result);
     }
 
     public function wordWrap(int $length = 76, string $break = "\n", bool $cut_words = false): static
     {
+        if (StringValidation::isMultibyte($this->value) OR !function_exists('wordwrap')) {
+            foreach ($this->explode(' ') as $chars) {
+                $chars = $chars->trim();
+                if (StringValidation::isLengthGreatherOrEqualsThan((string) $chars, $length)) {
+                    if ($cut_words) {
+                        $chars = $chars->chunk($length, $break);
+                    }
+                    $chars = $chars->concatenation('', $break);
+                    $str = '';
+                }
+                if (!isset($new)) {
+                    $new = $chars;
+                    continue;
+                } elseif (!isset($str)) {
+                    $str = (string) $new;
+                }
+                $chars = (string) $chars;
+                if (mb_strlen($str . ' ' . $chars) < $length) {
+                    $separator = ' ';
+                    $str .= ' ' . $chars;
+                } else {
+                    $separator = $break;
+                    $str = $chars;
+                }
+                $new = $new->trim()->concatenation($chars, $separator);
+            }
+            return $new->trim($break);
+        }
         return new StringsManipulators(wordwrap($this->value, $length, $break, $cut_words));
     }
 
@@ -151,7 +251,6 @@ class StringsManipulators implements Stringable
     public function eol(string $to_char = "\r\n"): static
     {
         $string = $this->value;
-
         if ($to_char != "\r\n") {
             $invert = ($to_char == "\r") ? "\n" : "\r";
             $string = str_replace("\r\n", $invert, $string);
@@ -161,7 +260,6 @@ class StringsManipulators implements Stringable
             $string = str_replace("\n", "\r", $string);
             $string = str_replace("\r", $to_char, $string);
         }
-
         return new StringsManipulators($string);
     }
 
@@ -192,7 +290,6 @@ class StringsManipulators implements Stringable
 
     public function convertEncoding(string $to_map = 'UTF-8', ?string $from_map = null): static
     {
-        //if (!@mb_check_encoding($this->value, $to_map)) {
         if (empty($from_map)) {
             $encodings = mb_list_encodings();
             $from_map = mb_detect_encoding($this->value, $encodings, true);

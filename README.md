@@ -83,6 +83,7 @@ Perform actions over strings, using multibyte functions where are available, and
 | roundToLowInteger  |                                                                                                   |
 | min                | pass an array or floats list and return the min including the internal value into the comparation |
 | max                | pass an array or floats list and return the max including the internal value into the comparation |
+| format             | format the number result, with quantity of decimals and chars separators (number_format)          |
 
 ```php
 echo (string)(NumbersManipulators($pvu = 100))

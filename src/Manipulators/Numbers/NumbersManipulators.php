@@ -2,6 +2,7 @@
 
 namespace JuanchoSL\DataManipulation\Manipulators\Numbers;
 
+use JuanchoSL\DataManipulation\Manipulators\Strings\StringsManipulators;
 use Stringable;
 
 class NumbersManipulators implements Stringable
@@ -109,8 +110,7 @@ class NumbersManipulators implements Stringable
      */
     public function percent(float $value): static
     {
-        $val = (string) $this->product($value)->division(100);
-        return new NumbersManipulators(+$val);
+        return $this->product($value)->division(100);
     }
 
     /**
@@ -120,8 +120,7 @@ class NumbersManipulators implements Stringable
      */
     public function increasePercent(float $value): static
     {
-        $val = (string) $this->percent($value);
-        return new NumbersManipulators($this->value + $val);
+        return $this->percent($value)->sum($this->value);
     }
 
     /**
@@ -131,13 +130,12 @@ class NumbersManipulators implements Stringable
      */
     public function decreasePercent(float $value): static
     {
-        $val = (string) $this->percent($value);
-        return new NumbersManipulators($this->value - $val);
+        return $this->sub(+$this->percent($value)->__tostring());
     }
 
     /**
      * Create an object with the new value, rounding to desired decimals precision, using 5 (half) as minimum value to round to up, 4 round to DOWN otherwise
-     * @param float $value
+     * @param int $decimals_precision
      * @return NumbersManipulators
      */
     public function roundHalfUp(int $decimals_precision): static
@@ -147,7 +145,7 @@ class NumbersManipulators implements Stringable
 
     /**
      * Create an object with the new value, rounding to desired decimals precision, using 5 (half) as maximum value to round to down, 6 round to UP otherwise
-     * @param float $value
+     * @param int $decimals_precision
      * @return NumbersManipulators
      */
     public function roundHalfDown(int $decimals_precision): static
@@ -221,10 +219,29 @@ class NumbersManipulators implements Stringable
      * Create an object with the maximum value between the original and a sequence of new values
      * @param float[] $numbers
      * @return NumbersManipulators
-     */
+    */
     public function max(float ...$numbers): static
     {
         return new NumbersManipulators(max(array_merge([$this->value], func_get_args())));
+    }
+
+    /**
+     * Format the number with desired decimals and char separators
+     * @param bool $decimal_separator_dot TRUE for use dot (.) as decimal separator
+     * @param int $decimals_precision Number of desired decimals
+     * @param bool $thousand_separator TRUE for use other than decimal separator, if for decs use dot (.), then use colon (,)
+     * @return StringsManipulators The formatted value as StringManipulator object
+     */
+    public function format(bool $decimal_separator_dot = true, int $decimals_precision = 2, bool $thousand_separator = false): StringsManipulators
+    {
+        if ($thousand_separator) {
+            $thousand_separator = ($decimal_separator_dot) ? ',' : '.';
+        } else {
+            $thousand_separator = '';
+        }
+        $decimal_separator_dot = $decimal_separator_dot ? '.' : ',';
+        $response = number_format($this->value, $decimals_precision, $decimal_separator_dot, $thousand_separator);
+        return new StringsManipulators($response);
     }
 
     public function __tostring(): string

@@ -3,6 +3,7 @@
 namespace JuanchoSL\DataManipulation\Tests\Unit;
 
 
+use JuanchoSL\DataManipulation\Manipulators\Arrays\ArrayManipulators;
 use JuanchoSL\DataManipulation\Manipulators\Arrays\ArrayMapManipulators;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertCount;
@@ -34,7 +35,7 @@ class ArrayMapManipulatorsTest extends TestCase
         $keys = ['name', 'surname'];
         $data = [['pepe', 'santos'], ['manuel', 'dominguez'], ['ana', 'caballero']];
 
-        $tool = new ArrayMapManipulators();
+        $tool = new ArrayManipulators();
         $tool->combine($keys);
         $results = $tool(...$data);
 
@@ -64,7 +65,7 @@ class ArrayMapManipulatorsTest extends TestCase
     {
         $data = [['pepe' => 'name', 'santos' => 'surname'], ['manuel' => 'name', 'dominguez' => 'surname'], ['ana' => 'name', 'caballero' => 'surname']];
 
-        $tool = new ArrayMapManipulators();
+        $tool = new ArrayManipulators();
         $tool->flip();
         $results = $tool(...$data);
 
@@ -81,6 +82,14 @@ class ArrayMapManipulatorsTest extends TestCase
 
         $tool = new ArrayMapManipulators();
         $tool->keyToCase(CASE_UPPER);
+        $results = $tool(...$data);
+        foreach ($results as $result) {
+            $this->assertIsArray($result);
+            $this->assertArrayHasKey('NAME', $result);
+            $this->assertArrayNotHasKey('name', $result);
+        }
+        $tool = new ArrayManipulators();
+        $tool = $tool->keyToCase(CASE_UPPER);
         $results = $tool(...$data);
         foreach ($results as $result) {
             $this->assertIsArray($result);

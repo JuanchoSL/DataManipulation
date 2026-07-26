@@ -62,9 +62,9 @@
                 "validator"
             ],
             "support": {
-                "source": "https://github.com/JuanchoSL/Validators/tree/1.0.9"
+                "source": "https://github.com/JuanchoSL/Validators/tree/1.0.8"
             },
-            "time": "2026-07-22T10:02:00+00:00"
+            "time": "2025-12-26T23:50:29+00:00"
         },
         {
             "name": "psr/log",

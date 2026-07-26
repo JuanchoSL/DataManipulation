@@ -4,30 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f898b976563aa41d8603cb67dbd9772",
+    "content-hash": "211f5440f0dd035c530fca74da3f05e4",
     "packages": [
         {
             "name": "juanchosl/validators",
-            "version": "1.0.9",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JuanchoSL/Validators.git",
-                "reference": "c97691bc8ef01084e1a0f209e0a55b1465406ab5"
+                "reference": "c20376666a18ccf36bed42b8b8e33f5d49681aa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JuanchoSL/Validators/zipball/c97691bc8ef01084e1a0f209e0a55b1465406ab5",
-                "reference": "c97691bc8ef01084e1a0f209e0a55b1465406ab5",
+                "url": "https://api.github.com/repos/JuanchoSL/Validators/zipball/c20376666a18ccf36bed42b8b8e33f5d49681aa9",
+                "reference": "c20376666a18ccf36bed42b8b8e33f5d49681aa9",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "juanchosl/datamanipulation": "1.0.*",
-                "php": "^8.1",
-                "psr/log": "3.0.*"
+                "php": "^8.1"
             },
             "require-dev": {
-                "juanchosl/logger": "1.1.*",
                 "phpstan/phpstan": "1.12.*",
                 "phpunit/phpunit": "10.5.*"
             },

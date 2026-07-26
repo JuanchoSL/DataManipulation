@@ -99,7 +99,7 @@ class StringsManipulators implements Stringable
     public function reverse(): static
     {
         $value = new StringsManipulators('');
-        if (StringValidation::isMultibyte($this->value)) {
+        if (mb_strlen($this->value) < strlen($this->value)) {
             $elements = array_reverse($this->split(1));
             foreach ($elements as $element) {
                 $value = $value->concatenation((string) $element, '');
@@ -125,7 +125,7 @@ class StringsManipulators implements Stringable
     public function toUpperWords(string $separators = " \t\r\n\f\v"): static
     {
         $result = $this->value;
-        if (StringValidation::isMultibyte($this->value) OR !function_exists('ucwords')) {
+        if (mb_strlen($this->value) < strlen($this->value) OR !function_exists('ucwords')) {
             foreach (mb_str_split($separators) as $separator) {
                 $new = new StringsManipulators("");
                 $iterable = (new StringsManipulators($result))->explode($separator);
@@ -194,7 +194,7 @@ class StringsManipulators implements Stringable
 
     public function wordWrap(int $length = 76, string $break = "\n", bool $cut_words = false): static
     {
-        if (StringValidation::isMultibyte($this->value) OR !function_exists('wordwrap')) {
+        if (mb_strlen($this->value) < strlen($this->value) OR !function_exists('wordwrap')) {
             foreach ($this->explode(' ') as $chars) {
                 $chars = $chars->trim();
                 if (StringValidation::isLengthGreatherOrEqualsThan((string) $chars, $length)) {
@@ -297,9 +297,8 @@ class StringsManipulators implements Stringable
                 $from_map = mb_detect_encoding($this->value, $encodings, false);
             }
         }
-        return new StringsManipulators(mb_convert_encoding($this->value, $to_map, $from_map));
-        //}
-        return $this;
+        $result = mb_convert_encoding($this->value, $to_map, $from_map);
+        return new StringsManipulators($result);
     }
 
     public function uuEncode(): static

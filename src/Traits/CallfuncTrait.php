@@ -4,39 +4,38 @@ namespace JuanchoSL\DataManipulation\Traits;
 
 trait CallfuncTrait
 {
-    /**
-     * @var array<string,int|array<string,mixed>> $sanitizers
-     */
-    protected array $sanitizers = [];
-
-    /**
-     * @param int|array<string,mixed> $options
-     */
-    protected function sanitize(string $filter, int|array $options = 0): static
+    public function __invoke(...$datas): mixed
     {
-        $this->sanitizers[$filter] = $options;
-        return $this;
-    }
-
-    public function __invoke(array ...$datas): mixed
-    {
-        if (false and func_num_args() > 1) {
-            foreach ($datas as $index => $data) {
-                $datas[$index] = $this($data);
-            }
-        } else {
+        foreach ($datas as $key => $data) {
             foreach ($this->sanitizers as $function => $options) {
+                if (is_iterable($options) && array_key_exists('multi', $options)) {
+                    if (!is_iterable($data) || !is_iterable(current($data))) {
+                        $data = [$data];
+                    }
+                    unset($options['multi']);
+                }
+
                 if (empty($options)) {
-                    $datas = call_user_func_array($function, $datas);
-                } elseif (isset($options['map'])) {
-                    $datas = array_map($function, [$options['map']], [$datas]);
-                } elseif (isset($options['iterable'])) {
-                    $datas = call_user_func($function, $datas);
+                    if (is_iterable($data) && is_numeric(key($data)) && is_iterable(current($data))) {
+                        $data = call_user_func_array($function, $data);//merge
+                    } else {
+                        $data = call_user_func($function, $data);//combine y flip
+                    }
+                } elseif (is_iterable($options)) {
+                    if (isset($options['first'])) {
+                        $first = is_array($options['first']) ? $options['first'] : [$options['first']];
+                        $data = call_user_func_array($function, array_merge($first, $data));
+                        //$data = call_user_func_array($function, array_merge($options['first'], $data));
+                    } else {
+                        $data = call_user_func_array($function, array_merge([$data], $options));
+                    }
                 } else {
-                    $datas = call_user_func_array($function, array_merge($datas, $options));
+                    $data = call_user_func($function, $data, $options);
                 }
             }
+            $datas[$key] = $data;
         }
+        $datas = (func_num_args() == 1) ? current($datas) : $datas;
         return $datas;
     }
 }

@@ -18,7 +18,7 @@ trait CallfuncMapTrait
         return $this;
     }
 
-    public function __invoke(array ...$datas): mixed
+    public function __invoke(...$datas): mixed
     {
         foreach ($datas as $key => $data) {
             foreach ($this->sanitizers as $function => $options) {

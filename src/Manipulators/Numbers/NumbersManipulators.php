@@ -3,10 +3,14 @@
 namespace JuanchoSL\DataManipulation\Manipulators\Numbers;
 
 use JuanchoSL\DataManipulation\Manipulators\Strings\StringsManipulators;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Stringable;
 
-class NumbersManipulators implements Stringable
+class NumbersManipulators implements Stringable, LoggerAwareInterface
 {
+
+    use LoggerAwareTrait;
 
     protected float $value = 0;
 
@@ -219,7 +223,7 @@ class NumbersManipulators implements Stringable
      * Create an object with the maximum value between the original and a sequence of new values
      * @param float[] $numbers
      * @return NumbersManipulators
-    */
+     */
     public function max(float ...$numbers): static
     {
         return new NumbersManipulators(max(array_merge([$this->value], func_get_args())));

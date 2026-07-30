@@ -3,14 +3,18 @@
 namespace JuanchoSL\DataManipulation\Manipulators\Strings;
 
 use JuanchoSL\DataManipulation\Manipulators\Numbers\NumbersManipulators;
+use JuanchoSL\DataManipulation\Sanitizers\Numbers\NumberSanitizers;
 use JuanchoSL\Validators\Types\Numbers\NumberValidation;
 use JuanchoSL\Validators\Types\Strings\StringValidation;
 use JuanchoSL\Validators\Types\Strings\StringValidations;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Stringable;
 
-class StringsManipulators implements Stringable
+class StringsManipulators implements Stringable, LoggerAwareInterface
 {
 
+    use LoggerAwareTrait;
     protected string $value;
 
     public function __construct(string $value)
@@ -37,7 +41,8 @@ class StringsManipulators implements Stringable
                         }
                     } while (++$i < $occurrence && !empty($str));
                 } else {
-                    $new = $new->substring(0, stripos($this->value, $char));
+                    $length = stripos($this->value, $char) or null;
+                    $new = $new->substring(0, $length);
                 }
             }
         } elseif ($occurrence < 0) {
@@ -65,7 +70,7 @@ class StringsManipulators implements Stringable
                     } while (++$i < $occurrence && !empty($_str));
                     $new = $new->replace($str . $char, '', true);
                 } else {
-                    $new = $new->substring(stripos($this->value, $char) + mb_strlen($char));
+                    $new = $new->substring(intval(stripos($this->value, $char)) + mb_strlen($char));
                 }
             }
         } elseif ($occurrence > 0) {

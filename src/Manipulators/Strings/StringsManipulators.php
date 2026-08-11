@@ -4,7 +4,7 @@ namespace JuanchoSL\DataManipulation\Manipulators\Strings;
 
 use JuanchoSL\DataManipulation\Manipulators\Numbers\NumbersManipulators;
 use JuanchoSL\DataManipulation\Sanitizers\Numbers\NumberSanitizers;
-use JuanchoSL\Validators\Types\Numbers\NumberValidation;
+use JuanchoSL\Validators\Types\Numbers\NumberValidations;
 use JuanchoSL\Validators\Types\Strings\StringValidation;
 use JuanchoSL\Validators\Types\Strings\StringValidations;
 use Psr\Log\LoggerAwareInterface;
@@ -26,24 +26,23 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
     {
         $new = new StringsManipulators($this->value);
         $count = mb_substr_count($this->value, $char);
-        if (NumberValidation::isValueLessThanOrEquals(abs($occurrence), $count)) {
-            if (StringValidation::isValueContaining($this->value, $char)) {
-                if ($occurrence < 0) {
-                    $occurrence = $count + ($occurrence + 1);
-                }
-                $i = 1;
-                if ($occurrence > 1) {
-                    $str = strtok($this->value, $char);
-                    $new = new StringsManipulators($str);
-                    do {
-                        if (($str = strtok($char)) !== false) {
-                            $new = $new->concatenation($str, $char);
-                        }
-                    } while (++$i < $occurrence && !empty($str));
-                } else {
-                    $length = stripos($this->value, $char) or null;
-                    $new = $new->substring(0, $length);
-                }
+        $validation = (new NumberValidations)->isValueGreatherThan(0)->isValueLessThanOrEquals($count);
+        if ($validation(abs($occurrence))) {
+            if ($occurrence < 0) {
+                $occurrence = $count + ($occurrence + 1);
+            }
+            $i = 1;
+            if ($occurrence > 1) {
+                $str = strtok($this->value, $char);
+                $new = new StringsManipulators($str);
+                do {
+                    if (($str = strtok($char)) !== false) {
+                        $new = $new->concatenation($str, $char);
+                    }
+                } while (++$i < $occurrence && !empty($str));
+            } else {
+                $length = stripos($this->value, $char) or null;
+                $new = $new->substring(0, $length);
             }
         } elseif ($occurrence < 0) {
             $new = $new->replace($this->value, '', true);
@@ -55,23 +54,22 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
     {
         $new = new StringsManipulators($this->value);
         $count = mb_substr_count($this->value, $char);
-        if (NumberValidation::isValueLessThanOrEquals(abs($occurrence), $count)) {
-            if (StringValidation::isValueContaining($this->value, $char)) {
-                if ($occurrence < 0) {
-                    $occurrence = $count - ($occurrence + 1);
-                }
-                $i = 1;
-                if ($occurrence > 1) {
-                    $str = strtok($this->value, $char);
-                    do {
-                        if (($_str = strtok($char)) !== false) {
-                            $str .= $char . $_str;
-                        }
-                    } while (++$i < $occurrence && !empty($_str));
-                    $new = $new->replace($str . $char, '', true);
-                } else {
-                    $new = $new->substring(intval(stripos($this->value, $char)) + mb_strlen($char));
-                }
+        $validation = (new NumberValidations)->isValueGreatherThan(0)->isValueLessThanOrEquals($count);
+        if ($validation(abs($occurrence))) {
+            if ($occurrence < 0) {
+                $occurrence = $count - ($occurrence + 1);
+            }
+            $i = 1;
+            if ($occurrence > 1) {
+                $str = strtok($this->value, $char);
+                do {
+                    if (($_str = strtok($char)) !== false) {
+                        $str .= $char . $_str;
+                    }
+                } while (++$i < $occurrence && !empty($_str));
+                $new = $new->replace($str . $char, '', true);
+            } else {
+                $new = $new->substring(intval(stripos($this->value, $char)) + mb_strlen($char));
             }
         } elseif ($occurrence > 0) {
             $new = $new->replace($this->value, '', true);
@@ -379,6 +377,12 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         return array_map(function ($partial) {
             return new StringsManipulators($partial);
         }, $data);
+    }
+
+    public function filter_var(int $filter, mixed $options)
+    {
+        $result = filter_var($this->value, $filter, $options);
+        return new StringsManipulators($result);
     }
 
     public function __tostring(): string

@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use JuanchoSL\DataManipulation\Manipulators\Numbers\NumbersManipulators;
 
 class DateManipulators
 {
@@ -110,9 +111,8 @@ class DateManipulators
      */
     public function fromExcel(int $input): ?DateTimeInterface
     {
-        $input = intval($input);
-        $input = ($input - 25569) * 86400;
-        return $this->fromTimestamp($input);
+        $input = (string) (new NumbersManipulators($input))->sub(25569)->product(86400);
+        return $this->fromTimestamp(+$input);
     }
 
     /**

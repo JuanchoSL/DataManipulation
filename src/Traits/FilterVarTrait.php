@@ -19,7 +19,7 @@ trait FilterVarTrait
         $new->sanitizers[] = [$filter => $options];
         return $new;
     }
-    
+
     public function __invoke(...$values): mixed
     {
         $response = [];
@@ -31,7 +31,13 @@ trait FilterVarTrait
                     $sanitizer = call_user_func_array($function, $options);
                 }
             }
-            $response[] = ($sanitizer instanceof ArrayManipulators) ? $sanitizer($value) : $sanitizer;
+            if ($sanitizer instanceof ArrayManipulators OR is_callable($sanitizer)) {
+                $sanitizer = $sanitizer($value);
+            }
+            if (is_object($sanitizer) AND ($sanitizer instanceof Stringable OR method_exists($sanitizer, '__tostring') OR method_exists($sanitizer, '__toString'))) {
+                $sanitizer = (string) $sanitizer;
+            }
+            $response[] = $sanitizer;
         }
         return (count(func_get_args()) == 1) ? current($response) : $response;
     }

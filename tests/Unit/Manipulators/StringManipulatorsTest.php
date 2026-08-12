@@ -2,10 +2,7 @@
 
 namespace JuanchoSL\DataManipulation\Tests\Unit\Manipulators;
 
-use JuanchoSL\DataManipulation\Manipulators\Strings\DelayedStringsManipulators;
 use JuanchoSL\DataManipulation\Manipulators\Strings\StringsManipulators;
-use JuanchoSL\Validators\Types\Strings\StringValidation;
-use JuanchoSL\Validators\Types\Strings\StringValidations;
 use PHPUnit\Framework\TestCase;
 
 class StringManipulatorsTest extends TestCase
@@ -86,7 +83,7 @@ class StringManipulatorsTest extends TestCase
     {
         $string = new StringsManipulators("camión");
         $this->assertNotEquals("camión", (string) $string1 = $string->convertEncoding("UTF-7"));
-        $this->assertEquals("camión", (string) $string = $string1->convertEncoding('UTF-8'));
+        $this->assertEquals("camión", (string) $string = $string1->convertEncoding('UTF-8', 'UTF-7'));
     }
     public function testQP()
     {
@@ -308,5 +305,54 @@ class StringManipulatorsTest extends TestCase
         $this->assertCount(2, $actual);
         $this->assertEquals("asdfgh", (string) $actual[0]);
         $this->assertEquals("wertyu", (string) $actual[1]);
+    }
+    public function testConvertingToNumber()
+    {
+        $values = [
+            ['2,000.00', '2000', '2000.00', '2000,00'],
+            ['2000.00', '2000', '2000.00', '2000,00'],
+            ['2000.01', '2000', '2000.01', '2000,01'],
+            ['2000,00', '2000', '2000.00', '2000,00'],
+            ['2.000,00', '2000', '2000.00', '2000,00'],
+            ['2,000.00€', '2000', '2000.00', '2000,00'],
+            ['2000.00€', '2000', '2000.00', '2000,00'],
+            ['2000.01€', '2000', '2000.01', '2000,01'],
+            ['2000,00€', '2000', '2000.00', '2000,00'],
+            ['2.000,00€', '2000', '2000.00', '2000,00'],
+            ['2.000.000,00', '2000000', '2000000.00', '2000000,00'],
+            ['2.000.000,00€', '2000000', '2000000.00', '2000000,00'],
+            ['2,000,000.00', '2000000', '2000000.00', '2000000,00'],
+            ['2,000,000.00€', '2000000', '2000000.00', '2000000,00'],
+        ];
+        foreach ($values as $value) {
+            list($org, $mod_cero, $mod_dot, $mod_comma) = $value;
+            $manipulator = new StringsManipulators($org);
+            $this->assertEquals($mod_cero, (string) $manipulator->toNumber()->format(true, 0), "Value: {$org}");
+            $this->assertEquals($mod_dot, (string) $manipulator->toNumber()->format(true, 2), "Value: {$org}");
+            $this->assertEquals($mod_comma, (string) $manipulator->toNumber()->format(false, 2), "Value: {$org}");
+        }
+        $values = [
+            ['2,000.00', '2,000', '2,000.00', '2.000,00'],
+            ['2000.00', '2,000', '2,000.00', '2.000,00'],
+            ['2000.01', '2,000', '2,000.01', '2.000,01'],
+            ['2000,00', '2,000', '2,000.00', '2.000,00'],
+            ['2.000,00', '2,000', '2,000.00', '2.000,00'],
+            ['2,000.00€', '2,000', '2,000.00', '2.000,00'],
+            ['2000.00€', '2,000', '2,000.00', '2.000,00'],
+            ['2000.01€', '2,000', '2,000.01', '2.000,01'],
+            ['2000,00€', '2,000', '2,000.00', '2.000,00'],
+            ['2.000,00€', '2,000', '2,000.00', '2.000,00'],
+            ['2.000.000,00', '2,000,000', '2,000,000.00', '2.000.000,00'],
+            ['2.000.000,00€', '2,000,000', '2,000,000.00', '2.000.000,00'],
+            ['2,000,000.00', '2,000,000', '2,000,000.00', '2.000.000,00'],
+            ['2,000,000.00€', '2,000,000', '2,000,000.00', '2.000.000,00'],
+        ];
+        foreach ($values as $value) {
+            list($org, $mod_cero, $mod_dot, $mod_comma) = $value;
+            $manipulator = new StringsManipulators($org);
+            $this->assertEquals($mod_cero, (string) $manipulator->toNumber()->format(true, 0, true), "Value: {$org}");
+            $this->assertEquals($mod_dot, (string) $manipulator->toNumber()->format(true, 2, true), "Value: {$org}");
+            $this->assertEquals($mod_comma, (string) $manipulator->toNumber()->format(false, 2, true), "Value: {$org}");
+        }
     }
 }

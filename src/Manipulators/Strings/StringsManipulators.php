@@ -385,6 +385,12 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         return new StringsManipulators($result);
     }
 
+    public function toNumber(): NumbersManipulators
+    {
+        $sanitizator = new NumberSanitizers();
+        $sanitizator = $sanitizator->float(false);
+        return (new NumbersManipulators(floatval((string) $sanitizator($this->value))));
+    }
     public function __tostring(): string
     {
         return (string) $this->value;

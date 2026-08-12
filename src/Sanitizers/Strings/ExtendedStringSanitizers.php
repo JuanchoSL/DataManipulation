@@ -51,7 +51,7 @@ class ExtendedStringSanitizers extends StringSanitizers
 
     public function unsafe(): static
     {
-        return $this->sanitize(FILTER_UNSAFE_RAW, $this->getOptions());
+        return $this->sanitize('filter_var', [FILTER_UNSAFE_RAW, $this->getOptions()]);
     }
 
     public function safe(bool $encode_quotes = true): static
@@ -60,16 +60,16 @@ class ExtendedStringSanitizers extends StringSanitizers
         if (!$encode_quotes) {
             $options |= FILTER_FLAG_NO_ENCODE_QUOTES;
         }
-        return $this->sanitize(FILTER_SANITIZE_SPECIAL_CHARS, $options);
+        return $this->sanitize('filter_var', [FILTER_SANITIZE_SPECIAL_CHARS, $options]);
     }
 
     public function urlEncode(): static
     {
-        return $this->sanitize(FILTER_SANITIZE_ENCODED, $this->getOptions());
+        return $this->sanitize('filter_var', [FILTER_SANITIZE_ENCODED, $this->getOptions()]);
     }
 
     public function htmlEncode(): static
     {
-        return $this->sanitize(FILTER_SANITIZE_SPECIAL_CHARS, $this->getOptions() | FILTER_FLAG_ENCODE_AMP);
+        return $this->sanitize('filter_var', [FILTER_SANITIZE_SPECIAL_CHARS, $this->getOptions() | FILTER_FLAG_ENCODE_AMP]);
     }
 }

@@ -26,6 +26,17 @@ class NumbersSanitizerTest extends TestCase
         $this->assertEquals(2000, $sanitizer('2,000.22€'));
     }
 
+    /*
+    public function testIntegerWithThousandsCallableTrue()
+    {
+        $sanitizer = (new NumberSanitizers())->integer(true);
+        //$this->assertEquals("2,000", $sanitizer('2000'));
+        //$this->assertEquals("2,000", $sanitizer('2000€'));
+        $this->assertEquals("2,000", $sanitizer('2000.22'));
+        $this->assertEquals("2,000", $sanitizer('2000.22€'));
+        $this->assertEquals("2,000", $sanitizer('2,000.22€'));
+    }
+*/
     public function testFloatTrue()
     {
         $this->assertEquals(2000, (new NumberSanitizers())->float()->__invoke('2000'));
@@ -33,6 +44,14 @@ class NumbersSanitizerTest extends TestCase
         $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2000.22'));
         $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2000.22€'));
         $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2,000.22€'));
+        $this->assertEquals("2.000,22", (new NumberSanitizers())->float(true)->__invoke('2.000,22€'));
+        $this->assertEquals("2,000.22", (new NumberSanitizers())->float(true)->__invoke('2,000.22€'));
+        $this->assertEquals("2.000.000,22", (new NumberSanitizers())->float(true)->__invoke('2.000.000,22€'));
+        $this->assertEquals("2,000,000.22", (new NumberSanitizers())->float(true)->__invoke('2,000,000.22€'));
+        $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2000,22'));
+        $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2000,22€'));
+        $this->assertEquals(2000000.22, (new NumberSanitizers())->float()->__invoke('2.000.000,22€'));
+        $this->assertEquals(2000.22, (new NumberSanitizers())->float()->__invoke('2.000,22€'));
     }
 
     public function testFloatSanitizerTrue()
@@ -43,6 +62,8 @@ class NumbersSanitizerTest extends TestCase
         $this->assertEquals(2000.22, $sanitizer('2000.22'));
         $this->assertEquals(2000.22, $sanitizer('2000.22€'));
         $this->assertEquals(2000.22, $sanitizer('2,000.22€'));
+        $this->assertEquals(2000.22, $sanitizer('2000,22'));
+        $this->assertEquals(2000.22, $sanitizer('2000,22€'));
     }
     public function testExtractInteger()
     {
@@ -51,5 +72,13 @@ class NumbersSanitizerTest extends TestCase
         $this->assertEquals(123456789, $sanitizer('Z123456789N'));
         $this->assertEquals(123456789, $sanitizer('Z123456789'));
     }
-        
+
+    public function testExtractAsFloatFromStringWithoutDecimals()
+    {
+        $sanitizer = (new NumberSanitizers())->float();
+        $this->assertEquals(123456789, $sanitizer('123456789N'));
+        $this->assertEquals(123456789, $sanitizer('Z123456789N'));
+        $this->assertEquals(123456789, $sanitizer('Z123456789'));
+    }
+
 }

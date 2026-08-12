@@ -6,36 +6,40 @@ trait FilterVarTrait
 {
 
     /**
-     * @var array<int,int|array<string,mixed>> $sanitizers
+     * @var array<string,int|array<string,mixed>> $sanitizers
      */
     protected array $sanitizers = [];
 
     /**
      * @param int|array<string,mixed> $options
      */
-    protected function sanitize(int $filter, int|array $options = 0): static
+    protected function sanitize(string $filter, int|array $options = 0): static
     {
-        $this->sanitizers[$filter] = $options;
-        return $this;
+        $new = clone $this;
+        $new->sanitizers[] = [$filter => $options];
+        return $new;
     }
 
-    public function __invoke(string ...$data): mixed
+    public function __invoke(...$values): mixed
     {
-        foreach ($data as $key => $value) {
-            foreach ($this->sanitizers as $filter => $options) {
-                if ($filter == FILTER_SANITIZE_NUMBER_INT) {
-                    $value = number_format((float) $value, 0);
+        $response = [];
+        foreach ($values as $value) {
+            $sanitizer = (method_exists($this, 'getManipulator')) ? $this->getManipulator($value) : null;
+            foreach ($this->sanitizers as $sanitizers) {
+                foreach ($sanitizers as $function => $options) {
+                    $function = empty($sanitizer) ? $function : [$sanitizer, $function];
+                    $sanitizer = call_user_func_array($function, $options);
                 }
-                if (isset($options['callback'])) {
-                    $value = call_user_func($options['callback'], $value);
-                    unset($options['callback']);
-                } else {
-                }
-                $value = filter_var($value, $filter, $options);
-                $data[$key] = $value;
             }
+            if ($sanitizer instanceof ArrayManipulators OR is_callable($sanitizer)) {
+                $sanitizer = $sanitizer($value);
+            }
+            if (is_object($sanitizer) AND ($sanitizer instanceof Stringable OR method_exists($sanitizer, '__tostring') OR method_exists($sanitizer, '__toString'))) {
+                $sanitizer = (string) $sanitizer;
+            }
+            $response[] = $sanitizer;
         }
-        return (count($data) == 1) ? current($data) : $data;
+        return (count(func_get_args()) == 1) ? current($response) : $response;
     }
 
 }

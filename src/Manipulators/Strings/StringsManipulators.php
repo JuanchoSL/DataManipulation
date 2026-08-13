@@ -24,7 +24,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
 
     public function substringBeforeChar(string $char, int $occurrence = 1): static
     {
-        $new = new StringsManipulators($this->value);
+        $new = new static($this->value);
         $count = mb_substr_count($this->value, $char);
         $validation = (new NumberValidations)->isValueGreatherThan(0)->isValueLessThanOrEquals($count);
         if ($validation(abs($occurrence))) {
@@ -34,7 +34,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
             $i = 1;
             if ($occurrence > 1) {
                 $str = strtok($this->value, $char);
-                $new = new StringsManipulators($str);
+                $new = new static($str);
                 do {
                     if (($str = strtok($char)) !== false) {
                         $new = $new->concatenation($str, $char);
@@ -52,7 +52,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
 
     public function substringAfterChar(string $char, int $occurrence = 1): static
     {
-        $new = new StringsManipulators($this->value);
+        $new = new static($this->value);
         $count = mb_substr_count($this->value, $char);
         $validation = (new NumberValidations)->isValueGreatherThan(0)->isValueLessThanOrEquals($count);
         if ($validation(abs($occurrence))) {
@@ -80,28 +80,28 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
     public function substring(int $offset, ?int $length = null): static
     {
         $result = (function_exists('mb_substr')) ? mb_substr($this->value, $offset, $length) : substr($this->value, $offset, $length);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function repeat(int $times): static
     {
-        return new StringsManipulators(str_repeat($this->value, $times));
+        return new static(str_repeat($this->value, $times));
     }
 
     public function format(string ...$values): static
     {
-        return new StringsManipulators(sprintf($this->value, ...$values));
+        return new static(sprintf($this->value, ...$values));
     }
 
     public function replace(string $search, string $replace, bool $case_sensitive = true): static
     {
         $result = ($case_sensitive) ? str_replace($search, $replace, $this->value) : str_ireplace($search, $replace, $this->value);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function reverse(): static
     {
-        $value = new StringsManipulators('');
+        $value = new static('');
         if (mb_strlen($this->value) < strlen($this->value)) {
             $elements = array_reverse($this->split(1));
             foreach ($elements as $element) {
@@ -116,13 +116,13 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
     public function toUpperFirst(): static
     {
         $result = (function_exists('mb_ucfirst')) ? mb_ucfirst($this->value) : ucfirst($this->value);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function toLowerFirst(): static
     {
         $result = (function_exists('mb_lcfirst')) ? mb_lcfirst($this->value) : lcfirst($this->value);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function toUpperWords(string $separators = " \t\r\n\f\v"): static
@@ -130,8 +130,8 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         $result = $this->value;
         if (mb_strlen($this->value) < strlen($this->value) OR !function_exists('ucwords')) {
             foreach (mb_str_split($separators) as $separator) {
-                $new = new StringsManipulators("");
-                $iterable = (new StringsManipulators($result))->explode($separator);
+                $new = new static("");
+                $iterable = (new static($result))->explode($separator);
                 foreach ($iterable as $char) {
                     $new = $new->concatenation((string) $char->toUpperFirst(), $separator);
                 }
@@ -140,19 +140,19 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         } else {
             $result = ucwords($this->value, $separators);
         }
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function toUpper(): static
     {
         $result = (function_exists('mb_strtoupper')) ? mb_strtoupper($this->value) : strtoupper($this->value);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function toLower(): static
     {
         $result = (function_exists('mb_strtolower')) ? mb_strtolower($this->value) : strtolower($this->value);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function padding(int $length, string $pad_string = ' ', int $pad_type = STR_PAD_LEFT): static
@@ -172,22 +172,22 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
             }
             $result = str_pad($this->value, +$length, $pad_string, $pad_type);
         }
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function preppend(string $value, string $separator = " "): static
     {
-        return new StringsManipulators($value . $separator . $this->value);
+        return new static($value . $separator . $this->value);
     }
 
     public function concatenation(string $value, string $separator = " "): static
     {
-        return new StringsManipulators($this->value . $separator . $value);
+        return new static($this->value . $separator . $value);
     }
 
     public function chunk(int $length = 76, string $separator = "\r\n"): static
     {
-        $value = new StringsManipulators('');
+        $value = new static('');
         $elements = $this->split($length);
         foreach ($elements as $element) {
             $value = $value->concatenation((string) $element, $separator);
@@ -225,30 +225,30 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
             }
             return $new->trim($break);
         }
-        return new StringsManipulators(wordwrap($this->value, $length, $break, $cut_words));
+        return new static(wordwrap($this->value, $length, $break, $cut_words));
     }
 
     public function trim(string $chars = " \n\r\t\v\x00"): static
     {
         $result = (function_exists('mb_trim')) ? mb_trim($this->value, $chars) : trim($this->value, $chars);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function ltrim(string $chars = " \n\r\t\v\x00"): static
     {
         $result = (function_exists('mb_ltrim')) ? mb_ltrim($this->value, $chars) : ltrim($this->value, $chars);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function rtrim(string $chars = " \n\r\t\v\x00"): static
     {
         $result = (function_exists('mb_rtrim')) ? mb_rtrim($this->value, $chars) : rtrim($this->value, $chars);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     /*public function crc32(): static
     {
-        return new StringsManipulators(crc32($this->value));
+        return new static(crc32($this->value));
     }*/
 
     public function eol(string $to_char = "\r\n"): static
@@ -263,32 +263,32 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
             $string = str_replace("\n", "\r", $string);
             $string = str_replace("\r", $to_char, $string);
         }
-        return new StringsManipulators($string);
+        return new static($string);
     }
 
     public function shuffle(): static
     {
-        return new StringsManipulators(str_shuffle($this->value));
+        return new static(str_shuffle($this->value));
     }
 
     public function rotate13(): static
     {
-        return new StringsManipulators(str_rot13($this->value));
+        return new static(str_rot13($this->value));
     }
 
     public function md5(): static
     {
-        return new StringsManipulators(md5($this->value));
+        return new static(md5($this->value));
     }
 
     public function quotedPrintableEncode(): static
     {
-        return new StringsManipulators(quoted_printable_encode($this->value));
+        return new static(quoted_printable_encode($this->value));
     }
 
     public function quotedPrintableDecode(): static
     {
-        return new StringsManipulators(quoted_printable_decode($this->value));
+        return new static(quoted_printable_decode($this->value));
     }
 
     public function convertEncoding(string $to_map = 'UTF-8', ?string $from_map = null): static
@@ -301,73 +301,73 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
             }
         }
         $result = mb_convert_encoding($this->value, $to_map, $from_map);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function uuEncode(): static
     {
-        return new StringsManipulators(convert_uuencode($this->value));
+        return new static(convert_uuencode($this->value));
     }
 
     public function uuDecode(): static
     {
-        return new StringsManipulators(convert_uudecode($this->value));
+        return new static(convert_uudecode($this->value));
     }
 
     public function urlEncode(): static
     {
-        return new StringsManipulators(rawurlencode($this->value));
+        return new static(rawurlencode($this->value));
     }
 
     public function urlDecode(): static
     {
-        return new StringsManipulators(rawurldecode($this->value));
+        return new static(rawurldecode($this->value));
     }
 
     public function base64Encode(): static
     {
-        return new StringsManipulators(base64_encode($this->value));
+        return new static(base64_encode($this->value));
     }
 
     public function base64Decode(): static
     {
-        return new StringsManipulators(base64_decode($this->value));
+        return new static(base64_decode($this->value));
     }
 
     public function base64UrlEncode(): static
     {
-        return (new StringsManipulators($this->value))->base64Encode()->replace('+', '-')->replace('/', '_')->rtrim('=');
+        return (new static($this->value))->base64Encode()->replace('+', '-')->replace('/', '_')->rtrim('=');
     }
 
     public function base64UrlDecode(): static
     {
-        return (new StringsManipulators($this->value))->replace('-', '+')->replace('_', '/')->base64Decode();
+        return (new static($this->value))->replace('-', '+')->replace('_', '/')->base64Decode();
     }
 
     public function binToHex(): static
     {
-        return new StringsManipulators(bin2hex($this->value));
+        return new static(bin2hex($this->value));
     }
 
     public function hexToBin(): static
     {
-        return new StringsManipulators(hex2bin($this->value));
+        return new static(hex2bin($this->value));
     }
 
     public function hash(string $algorithm, bool $binary = false): static
     {
-        return new StringsManipulators(hash($algorithm, $this->value, $binary));
+        return new static(hash($algorithm, $this->value, $binary));
     }
 
     public function hashHmac(string $algorithm, string $key, bool $binary = false): static
     {
-        return new StringsManipulators(hash_hmac($algorithm, $this->value, $key, $binary));
+        return new static(hash_hmac($algorithm, $this->value, $key, $binary));
     }
 
     public function explode(string $separator, int $limit = PHP_INT_MAX): iterable
     {
         return array_map(function ($partial) {
-            return new StringsManipulators($partial);
+            return new static($partial);
         }, explode($separator, $this->value, $limit));
     }
 
@@ -375,14 +375,14 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
     {
         $data = (mb_strlen($this->value) < strlen($this->value)) ? mb_str_split($this->value, $length) : str_split($this->value, $length);
         return array_map(function ($partial) {
-            return new StringsManipulators($partial);
+            return new static($partial);
         }, $data);
     }
 
     public function filter_var(int $filter, mixed $options)
     {
         $result = filter_var($this->value, $filter, $options);
-        return new StringsManipulators($result);
+        return new static($result);
     }
 
     public function toNumber(): NumbersManipulators

@@ -25,7 +25,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function absolute(): static
     {
-        return new NumbersManipulators(abs($this->value));
+        return new static(abs($this->value));
     }
 
     /**
@@ -34,7 +34,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function negation(): static
     {
-        return new NumbersManipulators(-$this->value);
+        return new static(-$this->value);
     }
 
     /**
@@ -44,7 +44,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function sum(float $value): static
     {
-        return new NumbersManipulators($this->value + $value);
+        return new static($this->value + $value);
     }
 
     /**
@@ -54,7 +54,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function sub(float $value): static
     {
-        return new NumbersManipulators($this->value - $value);
+        return new static($this->value - $value);
     }
 
     /**
@@ -64,7 +64,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function product(float $value): static
     {
-        return new NumbersManipulators($this->value * $value);
+        return new static($this->value * $value);
     }
 
     /**
@@ -74,7 +74,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function division(float $value): static
     {
-        return new NumbersManipulators($this->value / $value);
+        return new static($this->value / $value);
     }
 
     /**
@@ -84,7 +84,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function module(float $value): static
     {
-        return new NumbersManipulators(fmod($this->value, $value));
+        return new static(fmod($this->value, $value));
     }
 
     /**
@@ -94,7 +94,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function exponent(int $value): static
     {
-        return new NumbersManipulators($this->value ** $value);
+        return new static($this->value ** $value);
     }
 
     /**
@@ -104,7 +104,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function root(int $value = 2): static
     {
-        return new NumbersManipulators(pow($this->value, 1 / $value));
+        return new static(pow($this->value, 1 / $value));
     }
 
     /**
@@ -144,7 +144,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function roundHalfUp(int $decimals_precision): static
     {
-        return new NumbersManipulators(round($this->value, $decimals_precision, PHP_ROUND_HALF_UP));
+        return new static(round($this->value, $decimals_precision, PHP_ROUND_HALF_UP));
     }
 
     /**
@@ -154,7 +154,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function roundHalfDown(int $decimals_precision): static
     {
-        return new NumbersManipulators(round($this->value, $decimals_precision, PHP_ROUND_HALF_DOWN));
+        return new static(round($this->value, $decimals_precision, PHP_ROUND_HALF_DOWN));
     }
 
     /**
@@ -197,7 +197,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function roundToHighInteger(): static
     {
-        return new NumbersManipulators(ceil($this->value));
+        return new static(ceil($this->value));
     }
 
     /**
@@ -206,7 +206,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function roundToLowInteger(): static
     {
-        return new NumbersManipulators(floor($this->value));
+        return new static(floor($this->value));
     }
 
     /**
@@ -216,7 +216,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function min(float ...$numbers): static
     {
-        return new NumbersManipulators(min(array_merge([$this->value], func_get_args())));
+        return new static(min(array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -226,7 +226,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function max(float ...$numbers): static
     {
-        return new NumbersManipulators(max(array_merge([$this->value], func_get_args())));
+        return new static(max(array_merge([$this->value], func_get_args())));
     }
 
     /**

@@ -3,6 +3,7 @@
     "description": "Little methods collection in order to manipulate variables contents",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.4",
     "homepage": "https://github.com/JuanchoSL/DataManipulation",
     "keywords": [
         "variables",
@@ -23,7 +24,7 @@
         "php": "^8.0",
         "ext-mbstring": "*",
         "psr/log": "3.0.*",
-        "juanchosl/validators": "1.0.*"
+        "juanchosl/validators": "^1.0.10"
     },
     "require-dev": {
         "phpstan/phpstan": "1.12.*",

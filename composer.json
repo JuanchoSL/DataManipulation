@@ -3,6 +3,7 @@
     "description": "Little methods collection in order to manipulate variables contents",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.4",
     "homepage": "https://github.com/JuanchoSL/DataManipulation",
     "keywords": [
         "variables",

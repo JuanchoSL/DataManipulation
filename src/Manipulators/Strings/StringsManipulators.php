@@ -57,17 +57,19 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         $validation = (new NumberValidations)->isValueGreatherThan(0)->isValueLessThanOrEquals($count);
         if ($validation(abs($occurrence))) {
             if ($occurrence < 0) {
-                $occurrence = $count - ($occurrence + 1);
+                $occurrence = $count - abs($occurrence + 1);
             }
             $i = 1;
             if ($occurrence > 1) {
                 $str = strtok($this->value, $char);
+                $new = $new->substring(mb_strlen($str . $char));
                 do {
                     if (($_str = strtok($char)) !== false) {
-                        $str .= $char . $_str;
+                        $new = $new->substring(mb_strlen($_str . $char));
+                        //$str .= $char . $_str;
                     }
                 } while (++$i < $occurrence && !empty($_str));
-                $new = $new->replace($str . $char, '', true);
+                //$new = $new->replace($str . $char, '', true);
             } else {
                 $new = $new->substring(intval(stripos($this->value, $char)) + mb_strlen($char));
             }

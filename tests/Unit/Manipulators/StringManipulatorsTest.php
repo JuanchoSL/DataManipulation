@@ -251,7 +251,9 @@ class StringManipulatorsTest extends TestCase
         $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar('j:q', 2));
         $this->assertEquals("zxcvb", (string) $string->substringAfterChar(':', 2));
         $this->assertEquals("zxcvb", (string) $string->substringAfterChar(':', -1));
-        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringAfterChar(':', -2));
+        $this->assertEquals("qwertyu:zxcvb", (string) $string->substringAfterChar(':', -2));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringAfterChar(':', -3));
+        $this->assertEquals("asdfghj:qwertyu:zxcvb", (string) $string->substringBeforeChar(':', 3));
         $this->assertEquals("", (string) $string->substringAfterChar('j:q', 2));
     }
 

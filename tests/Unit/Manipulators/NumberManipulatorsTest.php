@@ -272,6 +272,40 @@ class NumberManipulatorsTest extends TestCase
         $res = (string) $calc->roundAwayToZero(1, false);
         $this->assertEquals(-1.5, +$res);
     }
+
+    public function testLogarithmNatural()
+    {
+        $calc = new NumbersManipulators(8);
+        $res = (string) $calc->logarithmNatural(2);
+        $this->assertEquals(3, +$res);
+    }
+
+    public function testLogarithmInverter()
+    {
+        $calc = new NumbersManipulators(3);
+        $res = (string) $calc->logarithmInverse(2);
+        $this->assertEquals(8, +$res);
+    }
+
+    public function testBaseConverter()
+    {
+        $calc = new NumbersManipulators(10);
+        $res = (string) $calc->baseConvert(10, 2);
+        $this->assertEquals(1010, +$res);
+        $res = (string) $calc->baseConvert(10, 5);
+        $this->assertEquals(20, +$res);
+        $res = (string) $calc->baseConvert(10, 16);
+        $this->assertEquals('a', $res);
+        $res = (string) $calc->baseConvert(10, 8);
+        $this->assertEquals(12, +$res);
+        $res = (string) $calc->baseConvert(2, 10);
+        $this->assertEquals(2, +$res);
+        $res = (string) $calc->baseConvert(8, 10);
+        $this->assertEquals(8, +$res);
+        $res = (string) $calc->baseConvert(16, 10);
+        $this->assertEquals(16, +$res);
+    }
+
     public function testFormattingNumber()
     {
         /*

@@ -41,7 +41,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
                     }
                 } while (++$i < $occurrence && !empty($str));
             } else {
-                $length = stripos($this->value, $char) or null;
+                $length = mb_stripos($this->value, $char) or null;
                 $new = $new->substring(0, $length);
             }
         } elseif ($occurrence < 0) {
@@ -71,7 +71,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
                 } while (++$i < $occurrence && !empty($_str));
                 //$new = $new->replace($str . $char, '', true);
             } else {
-                $new = $new->substring(intval(stripos($this->value, $char)) + mb_strlen($char));
+                $new = $new->substring(intval(mb_stripos($this->value, $char)) + mb_strlen($char));
             }
         } elseif ($occurrence > 0) {
             $new = $new->replace($this->value, '', true);
@@ -90,7 +90,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         return new static(str_repeat($this->value, $times));
     }
 
-    public function format(string ...$values): static
+    public function format(mixed ...$values): static
     {
         return new static(sprintf($this->value, ...$values));
     }

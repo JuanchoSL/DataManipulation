@@ -74,7 +74,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      */
     public function division(float $value): static
     {
-        return new static($this->value / $value);
+        return new static(fdiv($this->value, $value));
     }
 
     /**
@@ -92,7 +92,7 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
      * @param float $value
      * @return NumbersManipulators
      */
-    public function exponent(int $value): static
+    public function exponent(float $value): static
     {
         return new static($this->value ** $value);
     }
@@ -246,6 +246,41 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
         $decimal_separator_dot = $decimal_separator_dot ? '.' : ',';
         $response = number_format($this->value, $decimals_precision, $decimal_separator_dot, $thousand_separator);
         return new StringsManipulators($response);
+    }
+
+    /**
+     * Create an object with the natural logarithm of the original value 
+     * @param float $base The base to use
+     * @return NumbersManipulators
+     */
+    public function logarithmNatural(float $base): static
+    {
+        return new static(log($this->value, $base));
+    }
+    /**
+     * Create an object with the natural anti-logarithm
+     * @param float $base The base to use
+     * @return NumbersManipulators
+     */
+    public function logarithmInverse(float $base): static
+    {
+        return (new static($base))->exponent($this->value);
+    }
+
+    /**
+     * Create an object with the converted number to a new numeric base
+     * @param int $from_base The original base of given number
+     * @param int $to_base The destiny base to convert
+     * @return NumbersManipulators|StringsManipulators
+     */
+    public function baseConvert(int $from_base, int $to_base): static|StringsManipulators
+    {
+        $result = base_convert(strval($this->value), $from_base, $to_base);
+        if ($to_base > 10) {
+            return new StringsManipulators($result);
+        } else {
+            return new static(floatval($result));
+        }
     }
 
     public function __tostring(): string

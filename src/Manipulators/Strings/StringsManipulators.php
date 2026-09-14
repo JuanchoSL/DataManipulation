@@ -90,7 +90,7 @@ class StringsManipulators implements Stringable, LoggerAwareInterface
         return new static(str_repeat($this->value, $times));
     }
 
-    public function format(string ...$values): static
+    public function format(mixed ...$values): static
     {
         return new static(sprintf($this->value, ...$values));
     }

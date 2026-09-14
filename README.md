@@ -22,7 +22,7 @@ Perform actions over strings, using multibyte functions where are available, and
 | substringBeforeChar   |     X     | Extract a part of a string, ending at indicated #char# (from 1.0.3 you can select the char limit #occurrence# when the #limit# is more than 1 time, searching from start of string or from the end with a negative occurrence number) |
 | substringAfterChar    |     X     | Extract a part of a string, starting from indicated #char# (from 1.0.3 you can select the char limit #occurrence# when the #offset# is more than 1 time, searching from start of string or from the end with a negative occurrence number) |                                                                         |
 | repeat                |           | Repeat the string n times                                                                                                        |
-| format                |           | Apply format, with indicated values, to the string                                                                               |
+| format                |           | Apply format (sprintf), with indicated values, to the string                                                                               |
 | replace               |           | Search and replace a substring, can be case sensitive or not                                                                     |
 | reverse               |     X     | Apply a reverse to the string                                                                                                    |
 | toUpperFirst          |     X     | To upper the first char of the string                                                                                            |
@@ -84,6 +84,9 @@ Perform actions over strings, using multibyte functions where are available, and
 | min                | pass an array or floats list and return the min including the internal value into the comparation |
 | max                | pass an array or floats list and return the max including the internal value into the comparation |
 | format             | format the number result, with quantity of decimals and chars separators (number_format)          |
+| logarithmNatural   | Calculates the logarithm of N base from a given number                                            |
+| logarithmInverter  | Revert to the anti-logarithm of N base of a given number                                          |
+| baseConverter      | Convert a given number from a numeric base to other, if base is grether than 10, return stringable|
 
 ```php
 echo (string)(NumbersManipulators($pvu = 100))

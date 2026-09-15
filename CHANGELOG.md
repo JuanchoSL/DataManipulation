@@ -1,5 +1,24 @@
 # Change Log - DataManipulation
 
+## [1.0.4] - 2026-09-15
+
+### Added
+
+- logarithmNatural calculation function
+- logarithmInverse (anti-logarithm) calculation function
+- baseConvert function, in order to change the numeric base of a given value
+
+### Changed
+
+- Internal constructions for inmutability, has been changed to **new static** in order to be able to extends manipulation classes
+- Strings format method, accept a mixed parameter instead string, in order to use with integers formatting %d
+
+### Fixed
+
+- substringAfterChar with negative occurrence less than -1
+- full support for multibyte on substring functions
+- Numbers exponent calculation function, now accepts a float as exponent according to the documentation
+
 ## [1.0.3] - 2026-08-12
 
 ### Added

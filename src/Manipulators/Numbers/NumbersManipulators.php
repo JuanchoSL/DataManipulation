@@ -230,6 +230,17 @@ class NumbersManipulators implements Stringable, LoggerAwareInterface
     }
 
     /**
+     * Create an object with limited range, the maximum and minimal value, using it for supplying if the value is greather or less than
+     * @param float $max The maximun value for retrieve
+     * @param float $min The minimun value for retrieve, 0 by default
+     * @return NumbersManipulators
+     */
+    public function limitedIntoRange(float $max, float $min = 0): static
+    {
+        return $this->max($min)->min($max);
+    }
+
+    /**
      * Format the number with desired decimals and char separators
      * @param bool $decimal_separator_dot TRUE for use dot (.) as decimal separator
      * @param int $decimals_precision Number of desired decimals

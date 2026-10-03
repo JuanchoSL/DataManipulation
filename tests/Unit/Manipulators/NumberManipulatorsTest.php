@@ -287,6 +287,31 @@ class NumberManipulatorsTest extends TestCase
         $this->assertEquals(8, +$res);
     }
 
+    public function testLimits()
+    {
+        $calc = new NumbersManipulators(3);
+        $res = (string) $calc->limitedIntoRange(5, 2);
+        $this->assertEquals(3, +$res);
+        $calc = new NumbersManipulators(3);
+        $res = (string) $calc->limitedIntoRange(5, 3);
+        $this->assertEquals(3, +$res);
+        $calc = new NumbersManipulators(5);
+        $res = (string) $calc->limitedIntoRange(5, 3);
+        $this->assertEquals(5, +$res);
+        $calc = new NumbersManipulators(15);
+        $res = (string) $calc->limitedIntoRange(5, 3);
+        $this->assertEquals(5, +$res);
+        $calc = new NumbersManipulators(1);
+        $res = (string) $calc->limitedIntoRange(5, 3);
+        $this->assertEquals(3, +$res);
+        $calc = new NumbersManipulators(1);
+        $res = (string) $calc->limitedIntoRange(5);
+        $this->assertEquals(1, +$res);
+        $calc = new NumbersManipulators(-1);
+        $res = (string) $calc->limitedIntoRange(5);
+        $this->assertEquals(0, +$res);
+    }
+
     public function testBaseConverter()
     {
         $calc = new NumbersManipulators(10);
